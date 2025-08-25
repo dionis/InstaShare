@@ -1,4 +1,5 @@
-Backend/.env
+Backend/.venv/*
 Backend/specs/*
+Backend/app/_pycache_/*
 .cursor/*
 .venv/*

@@ -39,7 +39,7 @@ describe('userService', () => {
 
   test('createUser should create a new user', async () => {
     const newUser: Omit<User, 'id' | 'role' | 'created_at' | 'updated_at' | 'deleted_at'> = {
-      name: 'New User', email: 'new@example.com', phone: '+789', responsability: 'Designer', password: 'pass123'
+      name: 'New User', email: 'new@example.com', phone: '+789', responsability: 'Designer', password: ''
     };
     const createdUser: User = { ...newUser, id: 3, role: 'user' };
     mockedApi.post.mockResolvedValueOnce({ data: createdUser });
@@ -113,6 +113,7 @@ describe('userService', () => {
     expect(response).toEqual(mockResponse);
   });
 });
+
 
 
 

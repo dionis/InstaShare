@@ -134,3 +134,7 @@ The focus is to maintain simplicity and core functionality without additional co
 - https://supabase.com/docs/guides/database/connecting-to-postgres
 - https://github.com/orgs/supabase/discussions/35895
 -  
+
+## Execute project requeriments
+
+- docker-compose up -d

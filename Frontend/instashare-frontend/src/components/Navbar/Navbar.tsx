@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../contexts/AuthContext';
+import { Link } from 'react-router-dom';
 import styles from './Navbar.module.css';
 
 const Navbar: React.FC = () => {
@@ -19,19 +20,15 @@ const Navbar: React.FC = () => {
       <div className={styles.navLinks}>
         {currentUser ? (
           <>
-            <span className={styles.userName}>Welcome, {currentUser.displayName || currentUser.email}</span>
+            <span className={styles.userName}>Welcome, {currentUser.user_metadata?.full_name || currentUser.email}</span>
             <button onClick={handleLogout} className={styles.navButton}>Logout</button>
           </>
         ) : (
-          <a href="/login" className={styles.navButton}>Login</a>
+          <Link to="/login" className={styles.navButton}>Login</Link>
         )}
       </div>
     </nav>
   );
 };
 
-export default Navbar;
-
-
-
-
+export default Navbar; 

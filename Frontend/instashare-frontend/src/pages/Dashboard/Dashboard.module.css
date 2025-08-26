@@ -1,41 +1,60 @@
-.dashboardContainer {
+.dashboardLayout {
+  display: flex;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+  background-color: #f8f9fa;
+}
+
+.dashboardContent {
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  background-color: #f8f9fa;
-  font-family: Arial, sans-serif;
 }
 
 .dashboardHeader {
-  text-align: center;
-  padding: 40px 20px;
   background-color: #ffffff;
+  padding: 20px;
   border-bottom: 1px solid #e0e0e0;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  text-align: center;
 }
 
 .dashboardHeader h1 {
   color: #343a40;
-  margin-bottom: 10px;
+  margin: 0 0 10px 0;
 }
 
 .dashboardHeader p {
   color: #6c757d;
-  font-size: 18px;
+  margin: 0;
+  font-size: 1.1em;
 }
 
-.loading,
-.unauthorized {
-  font-size: 18px;
-  color: #dc3545;
+.mainContent {
+  flex-grow: 1;
+  padding: 20px;
+}
+
+.loading {
   text-align: center;
   padding: 50px;
+  font-size: 1.5em;
+  color: #007bff;
+}
+
+.unauthorized {
+  text-align: center;
+  padding: 50px;
+  font-size: 1.5em;
+  color: #dc3545;
 }
 
 .error {
   color: #dc3545;
   margin-top: 10px;
 }
+
+
 
 
 

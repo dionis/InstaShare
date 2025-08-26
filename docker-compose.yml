@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: instashare_db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./Backend:/app/Backend
+    environment:
+      DATABASE_URL: postgresql://user:password@db:5432/instashare_db
+      SUPABASE_URL: postgresql://user:password@db:5432/instashare_db # Redundant for local, but good for consistency
+    depends_on:
+      - db
+
+volumes:
+  db_data:

@@ -1,5 +1,7 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from app.core.config import Settings
+from app.db.base import get_db, SessionLocal, Base, engine
+from app.db.seed import create_initial_data
 
 settings = Settings()
 
@@ -7,6 +9,16 @@ app = FastAPI(
     title=settings.PROJECT_NAME,
     version=settings.PROJECT_VERSION,
 )
+
+
+@app.on_event("startup")
+def on_startup():
+    Base.metadata.create_all(bind=engine)
+    db = SessionLocal()
+    try:
+        create_initial_data(db)
+    finally:
+        db.close()
 
 
 @app.get("/", tags=["Health Check"])

@@ -72,7 +72,7 @@ describe('UserDocumentsPage', () => {
     });
   });
 
-  test("renders user's documents after fetching", async () => {
+  test(`renders user documents after fetching`, async () => {
     renderComponent();
     await waitFor(() => {
       expect(screen.getByText('My Uploaded Documents')).toBeInTheDocument();

@@ -22,3 +22,8 @@ class Document(Base):
     status = Column(Enum(DocumentStatus), default=DocumentStatus.uploaded)
 
     document_shares = relationship("DocumentShared", back_populates="document")
+
+
+
+
+

@@ -19,3 +19,8 @@ EXPOSE 8000
 
 # Command to keep container running for debugging
 CMD ["tail", "-f", "/dev/null"]
+
+
+
+
+

@@ -15,3 +15,8 @@ class DocumentShared(Base):
 
     document = relationship("Document", back_populates="document_shares")
     user = relationship("User", back_populates="documents_shared")
+
+
+
+
+

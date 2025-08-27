@@ -18,3 +18,8 @@ class User(Base):
     user_roles = relationship("UserRole", back_populates="user")
     documents_shared = relationship("DocumentShared", back_populates="user")
     logs = relationship("Log", back_populates="user")
+
+
+
+
+

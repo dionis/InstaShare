@@ -14,3 +14,8 @@ class UserRole(Base):
 
     role = relationship("Role", back_populates="user_roles")
     user = relationship("User", back_populates="user_roles")
+
+
+
+
+

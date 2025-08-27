@@ -13,3 +13,8 @@ class Role(Base):
     deleted_at = Column(DateTime, nullable=True)
 
     user_roles = relationship("UserRole", back_populates="role")
+
+
+
+
+

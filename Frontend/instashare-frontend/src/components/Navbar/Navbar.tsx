@@ -1,7 +1,7 @@
 import React from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { Link } from 'react-router-dom';
-import styles from './Navbar.module.css';
+import styles from './Navbar.module.css'; // This import is correct for CSS Modules.
 
 const Navbar: React.FC = () => {
   const { currentUser, logOut } = useAuth();

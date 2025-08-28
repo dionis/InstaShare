@@ -39,7 +39,7 @@ describe('Dashboard Component', () => {
       session: null,
       loading: true,
       signInWithOAuth: jest.fn(),
-      logOut: jest.fn(),
+      logout: jest.fn(),
     });
     render(
       <BrowserRouter>
@@ -57,7 +57,7 @@ describe('Dashboard Component', () => {
       session: null,
       loading: false,
       signInWithOAuth: jest.fn(),
-      logOut: jest.fn(),
+      logout: jest.fn(),
     });
     render(
       <BrowserRouter>
@@ -85,7 +85,7 @@ describe('Dashboard Component', () => {
       session: {} as any,
       loading: false,
       signInWithOAuth: jest.fn(),
-      logOut: jest.fn(),
+      logout: jest.fn(),
     });
 
     // Mock userService.getUserById if it were called, but Dashboard.tsx currently mocks it internally for display
@@ -122,7 +122,7 @@ describe('Dashboard Component', () => {
       session: {} as any,
       loading: false,
       signInWithOAuth: jest.fn(),
-      logOut: jest.fn(),
+      logout: jest.fn(),
     });
 
     // In Dashboard.tsx, the user data fetching is currently simulated. 

@@ -25,7 +25,7 @@ describe('Login Component', () => {
       session: null,
       loading: true,
       signInWithOAuth: jest.fn(),
-      logOut: jest.fn(),
+      logout: jest.fn(),
     });
     render(
       <AuthProvider>
@@ -49,7 +49,7 @@ describe('Login Component', () => {
       session: {} as any,
       loading: false,
       signInWithOAuth: jest.fn(),
-      logOut: jest.fn(),
+      logout: jest.fn(),
     });
     render(
       <AuthProvider>
@@ -65,7 +65,7 @@ describe('Login Component', () => {
       session: null,
       loading: false,
       signInWithOAuth: jest.fn(),
-      logOut: jest.fn(),
+      logout: jest.fn(),
     });
     render(
       <AuthProvider>
@@ -85,7 +85,7 @@ describe('Login Component', () => {
       session: null,
       loading: false,
       signInWithOAuth: mockSignInWithOAuth,
-      logOut: jest.fn(),
+      logout: jest.fn(),
     });
     render(
       <AuthProvider>
@@ -104,7 +104,7 @@ describe('Login Component', () => {
       session: null,
       loading: false,
       signInWithOAuth: mockSignInWithOAuth,
-      logOut: jest.fn(),
+      logout: jest.fn(),
     });
     render(
       <AuthProvider>
@@ -123,7 +123,7 @@ describe('Login Component', () => {
       session: null,
       loading: false,
       signInWithOAuth: mockSignInWithOAuth,
-      logOut: jest.fn(),
+      logout: jest.fn(),
     });
     render(
       <AuthProvider>

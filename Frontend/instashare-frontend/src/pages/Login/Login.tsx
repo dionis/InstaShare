@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../services/supabaseClient';
+import { useNavigate } from 'react-router-dom';
 import styles from './Login.module.css';
 import { FcGoogle } from 'react-icons/fc';
 import { FaFacebook, FaLinkedin } from 'react-icons/fa';
@@ -10,7 +11,7 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState<string | null>(null);
-
+  const navigate = useNavigate();
   const handleOAuthLogin = async (provider: 'google' | 'facebook' | 'linkedin') => {
     setLoginError(null);
     try {
@@ -48,6 +49,11 @@ const Login: React.FC = () => {
 
   if (currentUser) {
     return <div className={styles.loggedIn}>Welcome, {currentUser.user_metadata?.full_name || currentUser.email}!</div>;
+    // Add a delay before navigating to dashboard
+    setTimeout(() => {
+      navigate('/dashboard');
+    }, 45000); // 45 seconds delay
+
   }
 
   return (

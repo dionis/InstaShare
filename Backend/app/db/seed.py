@@ -1,11 +1,11 @@
 from sqlalchemy.orm import Session
-from ..db.base import Base, engine
-from ..models.user import User
-from ..models.document import Document, DocumentStatus
-from ..models.role import Role
-from ..models.document_shared import DocumentShared
-from ..models.user_role import UserRole
-from ..models.log import Log
+from db.base import Base, engine
+from models.user import User
+from models.document import Document, DocumentStatus
+from models.role import Role
+from models.document_shared import DocumentShared
+from models.user_role import UserRole
+from models.log import Log
 from datetime import datetime
 
 def create_initial_data(db: Session):

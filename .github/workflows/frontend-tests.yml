@@ -1,0 +1,37 @@
+name: Frontend Tests
+
+on:
+  push:
+    branches:
+      - main # or your main development branch, e.g., 'develop'
+    paths:
+      - 'Frontend/instashare-frontend/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20' # Use a consistent Node.js version
+
+    - name: Cache Node.js modules
+      uses: actions/cache@v4
+      with:
+        path: Frontend/instashare-frontend/node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('Frontend/instashare-frontend/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    - name: Install dependencies
+      run: npm install
+      working-directory: Frontend/instashare-frontend
+
+    - name: Run tests
+      run: npm test
+      working-directory: Frontend/instashare-frontend

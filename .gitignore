@@ -1,5 +1,7 @@
 Backend/.venv/*
 Backend/specs/*
 Backend/app/_pycache_/*
+Backend/.env
+Frontend/instashare-frontend/.env
 .cursor/*
 .venv/*

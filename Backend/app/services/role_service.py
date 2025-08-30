@@ -1,14 +1,19 @@
 from typing import List, Optional
 from supabase import create_client, Client
-from models import Role as RoleModel, Log as LogModel
-from schemas import Role as RoleSchema
+from models.role import Role as RoleModel
+from models.user import User as UserModel # Import for create_role_event if it logs user actions
+from schemas.role import Role as RoleSchema, RoleCreate, RoleUpdate
+from schemas.log import Log as LogSchema # Assuming role_service can create logs
 import os
 from datetime import datetime
 
 
 class RoleService:
-    def __init__(self, supabase_url: str = os.getenv("SUPABASE_URL"), supabase_key: str = os.getenv("SUPABASE_KEY")):
-        self.supabase: Client = create_client(supabase_url, supabase_key)
+    def __init__(self, supabase: Client):
+        #supabase_url = os.getenv("SUPABASE_URL")
+        #supabase_key = os.getenv("SUPABASE_KEY")
+        #self.supabase: Client = create_client(supabase_url, supabase_key)
+        self.supabase: Client = supabase
 
     async def create_role(self, role: RoleModel) -> RoleSchema:
         data, count = self.supabase.from_('roles').insert(role.model_dump()).execute()

@@ -1,10 +1,14 @@
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 from sqlalchemy import create_engine
 import os
 from dotenv import load_dotenv
+from supabase import create_client, Client
+from core.config import Settings
 
 load_dotenv()
+
+settings = Settings()
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
@@ -37,6 +41,13 @@ def get_db():
         yield db
     finally:
         db.close()
+
+
+def get_supabase_client() -> Client:
+    supabase_url = settings.SUPABASE_URL
+    supabase_key = settings.SUPABASE_KEY
+    supabase_client: Client = create_client(supabase_url, supabase_key)
+    return supabase_client
 
 
 

@@ -8,8 +8,11 @@ from datetime import datetime
 
 
 class DocumentService:
-    def __init__(self, supabase_url: str = os.getenv("SUPABASE_URL"), supabase_key: str = os.getenv("SUPABASE_KEY")):
-        self.supabase: Client = create_client(supabase_url, supabase_key)
+    def __init__(self, supabase: Client):
+        #supabase_url = os.getenv("SUPABASE_URL")
+        #supabase_key = os.getenv("SUPABASE_KEY")
+        #self.supabase: Client = create_client(supabase_url, supabase_key)
+        self.supabase: Client = supabase
 
     async def upload_document_info(self, document: DocumentModel) -> Document:
         data, count = self.supabase.from_('documents').insert(document.model_dump()).execute()

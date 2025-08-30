@@ -1,14 +1,24 @@
 from typing import List, Optional
 from supabase import create_client, Client
-from models import User as UserModel, Document as DocumentModel, UserRole
-from schemas import User as UserSchema, Document as DocumentSchema
+from models.user import User as UserModel
+from models.document import Document as DocumentModel
+from schemas.user import User as UserSchema, UserCreate, UserUpdate
+from schemas.document import Document as DocumentSchema
+#from sqlalchemy.orm import Session
 import os
 from datetime import datetime
 
 
 class UserService:
-    def __init__(self, supabase_url: str = os.getenv("SUPABASE_URL"), supabase_key: str = os.getenv("SUPABASE_KEY")):
-        self.supabase: Client = create_client(supabase_url, supabase_key)
+    def __init__(self, supabase: Client):
+        #supabase_url = os.getenv("SUPABASE_URL")
+        #supabase_key = os.getenv("SUPABASE_KEY")
+        
+        #print(f"Session: {db}")
+        #print(f"SUPABASE_URL: {supabase_url}")
+        #print(f"SUPABASE_KEY: {supabase_key}")
+        
+        self.supabase: Client = supabase
 
     async def list_users(self, offset: int = 0, limit: int = 100) -> List[UserSchema]:
         data, count = self.supabase.from_('users').select("*, user_roles(*, roles(*))").is_("deleted_at", None).range(offset, offset + limit - 1).execute()

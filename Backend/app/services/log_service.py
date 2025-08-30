@@ -1,14 +1,17 @@
 from typing import List, Optional
 from supabase import create_client, Client
-from models import Log as LogModel
-from schemas import Log as LogSchema 
+from models.log import Log as LogModel
+from schemas.log import Log as LogSchema, LogCreate, LogUpdate
 import os
 from datetime import datetime
 
 
 class LogService:
-    def __init__(self, supabase_url: str = os.getenv("SUPABASE_URL"), supabase_key: str = os.getenv("SUPABASE_KEY")):
-        self.supabase: Client = create_client(supabase_url, supabase_key)
+    def __init__(self, supabase: Client):
+        #supabase_url = os.getenv("SUPABASE_URL")
+        #supabase_key = os.getenv("SUPABASE_KEY")
+        #self.supabase: Client = create_client(supabase_url, supabase_key)
+        self.supabase: Client = supabase
 
     async def create_log(self, event: str, user_id: Optional[int] = None, event_description: Optional[str] = None) -> LogSchema:
         log_data = {"event": event, "user_id": user_id, "event_description": event_description, "shared_date": datetime.utcnow()}

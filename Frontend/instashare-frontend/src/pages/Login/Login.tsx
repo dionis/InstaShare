@@ -48,12 +48,7 @@ const Login: React.FC = () => {
   }
 
   if (currentUser) {
-    return <div className={styles.loggedIn}>Welcome, {currentUser.user_metadata?.full_name || currentUser.email}!</div>;
-    // Add a delay before navigating to dashboard
-    setTimeout(() => {
-      navigate('/dashboard');
-    }, 45000); // 45 seconds delay
-
+     navigate('/dashboard');
   }
 
   return (

@@ -4,83 +4,130 @@ from schemas import  UserCreate, UserUpdate, Document as DocumentSchema
 from unittest.mock import AsyncMock
 from services.user_service import UserService
 from core.main import app
-
+from schemas.user import UserCreate, UserUpdate, User
+from schemas.role import Role
+from datetime import datetime
+from fastapi.testclient import TestClient
 
 
 # All fixtures (client, mock_user_service) are in conftest.py
 
-# Test User Endpoints
-@pytest.mark.asyncio
-async def test_list_all_users(client, mock_user_service):
-    mock_user_service.list_users.return_value = [
-        User(id=1, name="User1", email="user1@example.com", password="hashed_password", phone="123", responsability="Dev", created_at="2024-01-01T00:00:00", updated_at="2024-01-01T00:00:00"),
-        User(id=2, name="User2", email="user2@example.com", password="hashed_password", phone="456", responsability="QA", created_at="2024-01-01T00:00:00", updated_at="2024-01-01T00:00:00"),
-    ]
-    response = client.get("/users")
+# --- Unauthenticated Endpoints Tests ---
+def test_read_root(client: TestClient):
+    response = client.get("/")
     assert response.status_code == 200
-    assert len(response.json()) == 2
+    assert response.json() == {"message": "Welcome to InstaShare Backend!"}
+
+def test_health_check(client: TestClient):
+    response = client.get("/health")
+    assert response.status_code == 200
+    assert response.json()["status"] == "ok"
+
+def test_list_all_users_unauthenticated(client: TestClient, mock_user_service: AsyncMock):
+    mock_user_service.list_users.return_value = []
+    response = client.get("/users/")
+    assert response.status_code == 200
+    assert response.json() == []
     mock_user_service.list_users.assert_called_once_with(0, 100)
 
-@pytest.mark.asyncio
-async def test_get_user_by_id(client, mock_user_service):
-    mock_user_service.get_user.return_value = User(
-        id=1, name="User1", email="user1@example.com", password="hashed_password", phone="123", responsability="Dev", created_at="2024-01-01T00:00:00", updated_at="2024-01-01T00:00:00"
-    )
+def test_get_user_by_id_unauthenticated(client: TestClient, mock_user_service: AsyncMock):
+    mock_user_service.get_user.return_value = None
     response = client.get("/users/1")
-    assert response.status_code == 200
-    assert response.json()["name"] == "User1"
+    assert response.status_code == 404
+    assert response.json() == {"detail": "User not found"}
     mock_user_service.get_user.assert_called_once_with(1)
 
-@pytest.mark.asyncio
-async def test_create_new_user(client, mock_user_service):
-    user_create = UserCreate(name="NewUser", email="newuser@example.com", password="new_password", phone="789", responsability="Dev")
-    mock_user_service.create_user.return_value = User(
-        id=3, name="NewUser", email="newuser@example.com", password="hashed_new_password", phone="789", responsability="Dev", created_at="2024-01-01T00:00:00", updated_at="2024-01-01T00:00:00"
-    )
-    response = client.post("/users/", json=user_create.model_dump())
+def test_create_new_user_unauthenticated(client: TestClient, mock_user_service: AsyncMock):
+    new_user_data = UserCreate(name="New User", email="new@example.com", password="newpassword", phone="1112223333", responsability="Editor")
+    created_user_response = User(id=1, created_at=datetime.utcnow(), updated_at=datetime.utcnow(), **new_user_data.model_dump())
+    mock_user_service.create_user.return_value = created_user_response
+    response = client.post("/users/", json=new_user_data.model_dump())
     assert response.status_code == 200
-    assert response.json()["name"] == "NewUser"
-    mock_user_service.create_user.assert_called_once()
+    assert response.json()["email"] == "new@example.com"
+    mock_user_service.create_user.assert_called_once_with(new_user_data)
 
-@pytest.mark.asyncio
-async def test_update_existing_user(client, mock_user_service):
-    user_update = UserUpdate(name="UpdatedUser")
-    mock_user_service.update_user.return_value = User(
-        id=1, name="UpdatedUser", email="user1@example.com", password="hashed_password", phone="123", responsability="Dev", created_at="2024-01-01T00:00:00", updated_at="2024-01-01T00:00:00"
-    )
-    response = client.put("/users/1", json=user_update.model_dump())
+def test_update_existing_user_unauthenticated(client: TestClient, mock_user_service: AsyncMock):
+    user_update_data = UserUpdate(name="Updated Name")
+    updated_user_response = User(id=1, name="Updated Name", email="test@example.com", password="testpassword", created_at=datetime.utcnow(), updated_at=datetime.utcnow())
+    mock_user_service.update_user.return_value = updated_user_response
+    response = client.put("/users/1", json=user_update_data.model_dump(exclude_unset=True))
     assert response.status_code == 200
-    assert response.json()["name"] == "UpdatedUser"
-    mock_user_service.update_user.assert_called_once()
+    assert response.json()["name"] == "Updated Name"
+    mock_user_service.update_user.assert_called_once_with(1, user_update_data)
 
-@pytest.mark.asyncio
-async def test_delete_existing_user(client, mock_user_service):
+def test_delete_existing_user_unauthenticated(client: TestClient, mock_user_service: AsyncMock):
     mock_user_service.delete_user.return_value = {"action": "deleted", "message": "User deleted"}
     response = client.delete("/users/1")
     assert response.status_code == 200
-    assert response.json()["action"] == "deleted"
+    assert response.json() == {"action": "deleted", "message": "User deleted"}
     mock_user_service.delete_user.assert_called_once_with(1)
 
-@pytest.mark.asyncio
-async def test_get_user_uploaded_documents(client, mock_user_service):
-    mock_user_service.get_documents_uploaded_by_user.return_value = {
-        "id": 1,
-        "name": "User1",
-        "email": "user1@example.com",
-        "uploaded_documents": [
-            {"id": 1, "name": "doc1", "type": "pdf", "size": 100, "uploaded_at": "2024-01-01T00:00:00"},
-        ],
-    }
+def test_get_user_uploaded_documents_unauthenticated(client: TestClient, mock_user_service: AsyncMock):
+    mock_user_service.get_documents_uploaded_by_user.return_value = None
     response = client.get("/users/1/uploaded_documents")
-    assert response.status_code == 200
-    assert response.json()["id"] == 1
-    assert len(response.json()["uploaded_documents"]) == 1
+    assert response.status_code == 404
+    assert response.json() == {"detail": "User not found or no documents uploaded"}
     mock_user_service.get_documents_uploaded_by_user.assert_called_once_with(1)
 
-@pytest.mark.asyncio
-async def test_assign_role_to_user(client, mock_user_service):
-    mock_user_service.assign_role_to_user.return_value = {"user_id": 1, "role_id": 1, "status": "assigned"}
+def test_assign_role_to_user_unauthenticated(client: TestClient, mock_user_service: AsyncMock):
+    mock_user_service.assign_role_to_user.return_value = {"message": "Role assigned successfully"}
     response = client.post("/users/1/assign_role/1")
     assert response.status_code == 200
-    assert response.json()["status"] == "assigned"
+    assert response.json() == {"message": "Role assigned successfully"}
     mock_user_service.assign_role_to_user.assert_called_once_with(1, 1)
+
+# --- Authenticated Endpoints Tests ---
+def test_login_for_access_token(client: TestClient, mock_supabase_client: AsyncMock, dummy_user: dict):
+    # Mock the user query in the Supabase client mock
+    mock_supabase_client.from_.return_value.select.return_value.filter.return_value.execute.return_value = (None, [dummy_user])
+
+    response = client.post(
+        "/token",
+        data={
+            "username": dummy_user["email"],
+            "password": dummy_user["password"]
+        }
+    )
+    assert response.status_code == 200
+    assert "access_token" in response.json()
+    assert response.json()["token_type"] == "bearer"
+
+def test_list_all_users_authenticated(authenticated_client: TestClient, mock_user_service: AsyncMock, dummy_user: dict):
+    # Mock user service to return the dummy user in a list
+    mock_user_service.list_users.return_value = [User(**dummy_user)]
+    response = authenticated_client.get("/users/authenticated/")
+    assert response.status_code == 200
+    assert response.json()[0]["email"] == dummy_user["email"]
+    mock_user_service.list_users.assert_called_once_with(0, 100)
+
+def test_get_user_by_id_authenticated(authenticated_client: TestClient, mock_user_service: AsyncMock, dummy_user: dict):
+    mock_user_service.get_user.return_value = User(**dummy_user)
+    response = authenticated_client.get(f"/users/authenticated/{dummy_user["id"]}")
+    assert response.status_code == 200
+    assert response.json()["email"] == dummy_user["email"]
+    mock_user_service.get_user.assert_called_once_with(dummy_user["id"])
+
+def test_create_new_user_authenticated(authenticated_client: TestClient, mock_user_service: AsyncMock):
+    new_user_data = UserCreate(name="Auth New User", email="auth_new@example.com", password="authnewpassword", phone="9998887777", responsability="Viewer")
+    created_user_response = User(id=2, created_at=datetime.utcnow(), updated_at=datetime.utcnow(), **new_user_data.model_dump())
+    mock_user_service.create_user.return_value = created_user_response
+    response = authenticated_client.post("/users/authenticated/", json=new_user_data.model_dump())
+    assert response.status_code == 200
+    assert response.json()["email"] == "auth_new@example.com"
+    mock_user_service.create_user.assert_called_once_with(new_user_data)
+
+def test_update_existing_user_authenticated(authenticated_client: TestClient, mock_user_service: AsyncMock, dummy_user: dict):
+    user_update_data = UserUpdate(name="Auth Updated Name")
+    updated_user_response = User(id=dummy_user["id"], name="Auth Updated Name", email=dummy_user["email"], password=dummy_user["password"], created_at=datetime.utcnow(), updated_at=datetime.utcnow())
+    mock_user_service.update_user.return_value = updated_user_response
+    response = authenticated_client.put(f"/users/authenticated/{dummy_user["id"]}", json=user_update_data.model_dump(exclude_unset=True))
+    assert response.status_code == 200
+    assert response.json()["name"] == "Auth Updated Name"
+    mock_user_service.update_user.assert_called_once_with(dummy_user["id"], user_update_data)
+
+def test_delete_existing_user_authenticated(authenticated_client: TestClient, mock_user_service: AsyncMock, dummy_user: dict):
+    mock_user_service.delete_user.return_value = {"action": "deleted", "message": "User deleted"}
+    response = authenticated_client.delete(f"/users/authenticated/{dummy_user["id"]}")
+    assert response.status_code == 200
+    assert response.json() == {"action": "deleted", "message": "User deleted"}
+    mock_user_service.delete_user.assert_called_once_with(dummy_user["id"])

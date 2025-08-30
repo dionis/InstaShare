@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { supabase } from './supabaseClient'; // Import supabase
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -15,12 +16,11 @@ const api = axios.create({
 
 // You can add interceptors here for things like authentication tokens
 api.interceptors.request.use(
-  (config) => {
-    // For example, add an auth token if available
-    // const token = localStorage.getItem('authToken');
-    // if (token) {
-    //   config.headers.Authorization = `Bearer ${token}`;
-    // }
+  async (config) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (session) {
+      config.headers.Authorization = `Bearer ${session.access_token}`;
+    }
     return config;
   },
   (error) => {

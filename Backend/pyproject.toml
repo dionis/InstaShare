@@ -18,6 +18,7 @@ dependencies = [
     "pydantic[email]>=2.11.7",
     "python-multipart>=0.0.20",
     "psycopg2>=2.9.10",
+    "python-jose>=3.5.0",
 ]
 
 [project.optional-dependencies]

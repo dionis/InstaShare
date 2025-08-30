@@ -1,6 +1,7 @@
 Backend/.venv/*
 Backend/specs/*
 Backend/app/_pycache_/*
+Backend/app/core/_pycache_/*
 Backend/app/.env
 Backend/.env
 Backend/_env

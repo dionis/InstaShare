@@ -2,14 +2,19 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+
 # Install uv and create a virtual environment
 RUN pip install uv
-RUN uv pip install -e ".[dev]"
+
 #RUN uv venv
 #ENV PATH="/app/.venv/bin:$PATH"
 
 # Copy dependency files
 COPY pyproject.toml uv.lock ./
+RUN apt-get update
+RUN apt-get install -y python3-dev libpq-dev
+RUN apt-get -y install gcc
+RUN uv pip install --system  -e ".[dev]"
 
 # Install dependencies into the virtual environment
 ENV UV_PROJECT_ENVIRONMENT="/usr/local/"
@@ -23,4 +28,8 @@ COPY ./specs ./specs
 EXPOSE 8000
 
 # Command to run uvicorn with hot reload
-CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+WORKDIR "app/"
+CMD ["python", "-m", "uvicorn", "core.main:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
+
+#WORKDIR "core/"
+#CMD ["celery", "-A", "tasks", "worker", "--loglevel=info"]

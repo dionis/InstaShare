@@ -2,14 +2,14 @@ import pytest
 from datetime import datetime
 from fastapi.testclient import TestClient
 
-from ..models.role import Role as RoleModel
-from ..models.log import Log as LogModel
-from ..schemas.role import Role as RoleSchema, RoleCreate, RoleUpdate
-from ..schemas.log import Log as LogSchema
-from ..schemas.user import User as UserSchema # For authenticated client fixture
+from models.role import Role as RoleModel
+from models.log import Log as LogModel
+from schemas.role import Role as RoleSchema, RoleCreate, RoleUpdate
+from schemas.log import Log as LogSchema
+from schemas.user import User as UserSchema # For authenticated client fixture
 from unittest.mock import AsyncMock
-from ..services.role_service import RoleService
-from ..core.main import app
+from services.role_service import RoleService
+from core.main import app
 
 
 # All fixtures (client, mock_role_service, authenticated_client, dummy_user) are in conftest.py

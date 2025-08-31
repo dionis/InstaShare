@@ -18,6 +18,7 @@ from schemas.user import UserCreate
 
 from supabase import Client
 from datetime import datetime
+from models import User
 
 # Use an in-memory SQLite database for testing
 SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
@@ -71,11 +72,18 @@ def dummy_user_fixture():
     }
 
 @pytest.fixture(name="authenticated_client")
-def authenticated_client_fixture(client: TestClient, mock_supabase_client: AsyncMock, dummy_user: dict):
+def authenticated_client_fixture(client: TestClient, mock_supabase_client: AsyncMock, dummy_user: dict, session: SessionTesting):
+    # Add the dummy user to the session
+    user_model = User(**dummy_user)
+    session.add(user_model)
+    session.commit()
+    session.refresh(user_model)
+
     # Mock the user query in the Supabase client mock
-    mock_supabase_client.from_.return_value.select.return_value.eq.return_value.is_.return_value.execute.return_value = (None, [dummy_user])
+    mock_supabase_client.from_.return_value.select.return_value.eq.return_value.is_.return_value.execute.return_value.data = [dummy_user]
     
     access_token = create_access_token(data={"sub": dummy_user["email"]})
+    
     client.headers = {
         "Authorization": f"Bearer {access_token}"
     }

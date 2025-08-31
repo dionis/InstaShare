@@ -3,12 +3,12 @@ import os
 from datetime import datetime
 from fastapi.testclient import TestClient
 
-from ..models.document import Document as DocumentModel, DocumentStatus
-from ..schemas.document import Document as DocumentSchema, DocumentCreate, DocumentUpdate, DocumentStatusSchema
-from ..schemas.user import User as UserSchema # For document shared users
+from models.document import Document as DocumentModel, DocumentStatus
+from schemas.document import Document as DocumentSchema, DocumentCreate, DocumentUpdate, DocumentStatusSchema
+from schemas.user import User as UserSchema # For document shared users
 from unittest.mock import AsyncMock
-from ..services.document_service import DocumentService
-from ..core.main import app
+from services.document_service import DocumentService
+from core.main import app
 
 # All fixtures (client, mock_document_service) are in conftest.py
 

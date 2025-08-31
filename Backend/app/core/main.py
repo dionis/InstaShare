@@ -13,7 +13,7 @@ from auth.dependencies import get_current_user
 from schemas.user import User, UserCreate, UserUpdate
 from schemas.document import Document, DocumentCreate, DocumentUpdate
 from schemas.role import Role, RoleCreate, RoleUpdate
-from schemas.log import Log, LogCreate, LogUpdate
+from schemas.log import LogBase, Log, LogCreate, LogUpdate
 from schemas.document_shared import DocumentShared, DocumentSharedCreate, DocumentSharedUpdate
 from schemas.user_role import UserRole, UserRoleCreate, UserRoleUpdate
 
@@ -27,7 +27,13 @@ from typing import List, Optional
 from sqlalchemy.orm import Session
 from supabase import Client
 
+from celery import Celery
+from celery.schedules import crontab
+from datetime import date
+
+
 settings = Settings()
+
 
 app = FastAPI(
     title=settings.PROJECT_NAME,
@@ -41,6 +47,7 @@ app.add_middleware(
         allow_methods=["*"],  # Allows all HTTP methods (GET, POST, PUT, DELETE, etc.)
         allow_headers=["*"],  # Allows all headers
     )
+
 
 @app.on_event("startup")
 def on_startup():
@@ -272,7 +279,7 @@ async def get_user_by_id(user_id: int, user_service: UserService = Depends(get_u
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
         return user
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        raise e if e.status_code == status.HTTP_404_NOT_FOUND else  HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 @app.get("/users/authenticated/{user_id}", response_model=User, tags=["Users", "Authenticated"])
 async def get_user_by_id_authenticated(user_id: int, user_service: UserService = Depends(get_user_service), current_user: User = Depends(get_current_user)):
@@ -344,7 +351,7 @@ async def get_user_uploaded_documents(user_id: int, user_service: UserService = 
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found or no documents uploaded")
         return user_documents
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        raise e if e.status_code == status.HTTP_404_NOT_FOUND else  HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 @app.get("/users/authenticated/{user_id}/uploaded_documents", response_model=dict, tags=["Users", "Authenticated"])
 async def get_user_uploaded_documents_authenticated(user_id: int, user_service: UserService = Depends(get_user_service), current_user: User = Depends(get_current_user)):
@@ -443,17 +450,19 @@ async def create_new_role_event_authenticated(event: str, user_id: int, event_de
 
 # Log Endpoints
 @app.post("/logs/", response_model=Log)
-async def create_new_log(event: str, user_id: Optional[int] = None, event_description: Optional[str] = None, log_service: LogService = Depends(get_log_service)):
+async def create_new_log(log_item: LogBase, log_service: LogService = Depends(get_log_service)):
+    #event: str, user_id: Optional[int] = None, event_description: Optional[str] = None
+    
     try:
-        log_entry = await log_service.create_log(event, user_id, event_description)
+        log_entry = await log_service.create_log(log_item.event, log_item.user_id, log_item.event_description)
         return log_entry
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 @app.post("/logs/authenticated/", response_model=Log, tags=["Logs", "Authenticated"])
-async def create_new_log_authenticated(event: str, user_id: Optional[int] = None, event_description: Optional[str] = None, log_service: LogService = Depends(get_log_service), current_user: User = Depends(get_current_user)):
+async def create_new_log_authenticated(log_item: LogBase, log_service: LogService = Depends(get_log_service), current_user: User = Depends(get_current_user)):
     try:
-        log_entry = await log_service.create_log(event, user_id, event_description)
+        log_entry = await log_service.create_log(log_item.event, log_item.user_id, log_item.event_description)
         return log_entry
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
@@ -509,4 +518,10 @@ async def get_logs_for_user_authenticated(user_id: int, offset: int = 0, limit: 
         return logs
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+
+
+##### Scheduler periodical task execution ########################
+
+
+
 

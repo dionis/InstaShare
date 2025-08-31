@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaSave, FaTrash, FaUserTag, FaArrowLeft } from 'react-icons/fa';
-// import Navbar from '../../components/Navbar/Navbar'; // Eliminar esta línea
 import { userService, User } from '../../services/userService';
 import styles from './UserDetailPage.module.css';
 
@@ -17,10 +16,12 @@ const UserDetailPage: React.FC = () => {
     responsability: '',
     role: 'user', // Default role
     password: '',
+    confirmPassword: '', // Initialize confirmPassword
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [passwordMismatchError, setPasswordMismatchError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isNewUser && id) {
@@ -44,6 +45,7 @@ const UserDetailPage: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+    setPasswordMismatchError(null); // Clear mismatch error on change
     setUser((prevUser) => ({
       ...prevUser,
       [name]: value,
@@ -55,11 +57,17 @@ const UserDetailPage: React.FC = () => {
     setLoading(true);
     setError(null);
     setMessage(null);
+    setPasswordMismatchError(null); // Clear mismatch error on submit
 
     try {
       if (isNewUser) {
         if (!user.name || !user.email || !user.password || !user.responsability) {
           throw new Error("Please fill in all required fields.");
+        }
+        if (user.password !== user.confirmPassword) {
+          setPasswordMismatchError("Passwords do not match.");
+          setLoading(false);
+          return; // Stop form submission
         }
         await userService.createUser({ 
           name: user.name, 
@@ -125,10 +133,9 @@ const UserDetailPage: React.FC = () => {
     }
   };
 
-  if (loading && !isNewUser) {
+  if (loading) {
     return (
       <div className={styles.container}>
-        {/* <Navbar /> */}
         <div className={styles.loading}>Loading user data...</div>
       </div>
     );
@@ -149,8 +156,7 @@ const UserDetailPage: React.FC = () => {
             name="name"
             value={user.name || ''}
             onChange={handleChange}
-            required
-            disabled={!isNewUser}
+            required           
           />
         </div>
         <div className={styles.inputGroup}>
@@ -190,15 +196,32 @@ const UserDetailPage: React.FC = () => {
             />
           </div>
         )}
+        {isNewUser && (
+          <div className={styles.inputGroup}>
+            <label htmlFor="confirmPassword">Confirm Password:</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              value={user.confirmPassword || ''}
+              onChange={handleChange}
+              required={isNewUser}
+            />
+          </div>
+        )}
         <div className={styles.inputGroup}>
           <label htmlFor="phone">Phone:</label>
           <input
-            type="text"
+            type="tel"
             id="phone"
             name="phone"
-            value={user.phone || ''}
+            value={user.phone || ''}            
             onChange={handleChange}
+            maxLength={20}
+            pattern="[0-9]{7,20}" // Assuming phone numbers are 7-20 digits and only numbers
+            title="Please enter only digits for the phone number (7-20 characters)"
           />
+          <small className={styles.inputHint}>Enter 7-20 digits for the phone number.</small>
         </div>
         <div className={styles.inputGroup}>
           <label htmlFor="responsability">Responsibility:</label>
@@ -248,6 +271,7 @@ const UserDetailPage: React.FC = () => {
       </form>
       {message && <p className={styles.successMessage}>{message}</p>}
       {error && <p className={styles.errorMessage}>{error}</p>}
+      {passwordMismatchError && <p className={styles.errorMessage}>{passwordMismatchError}</p>}
     </div>
   );
 };

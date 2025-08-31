@@ -13,10 +13,39 @@ const DocumentUploadPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+  const [fileValidationError, setFileValidationError] = useState<string | null>(null);
+  const [isUploadDisabled, setIsUploadDisabled] = useState(true);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setSelectedFile(e.target.files[0]);
+      const file = e.target.files[0];
+      setSelectedFile(file);
+      setFileValidationError(null); // Clear previous errors
+      setIsUploadDisabled(true); // Disable until validated
+
+      const allowedExtensions = ['pdf', 'docx', 'zip'];
+      const maxFileSizeMB = 500;
+      const maxFileSizeBytes = maxFileSizeMB * 1024 * 1024;
+
+      const fileExtension = file.name.split('.').pop()?.toLowerCase();
+      setDocumentType(fileExtension || ''); // Automatically set document type
+
+      if (!fileExtension || !allowedExtensions.includes(fileExtension)) {
+        setFileValidationError(`Invalid file type. Allowed types are: ${allowedExtensions.join(', ')}.`);
+        return;
+      }
+
+      if (file.size > maxFileSizeBytes) {
+        setFileValidationError(`File size exceeds ${maxFileSizeMB} MB. Please upload a smaller file.`);
+        return;
+      }
+
+      // If all validations pass
+      setIsUploadDisabled(false);
+    } else {
+      setSelectedFile(null);
+      setIsUploadDisabled(true);
+      setFileValidationError(null);
     }
   };
 
@@ -102,8 +131,9 @@ const DocumentUploadPage: React.FC = () => {
             onChange={handleFileChange}
             required
           />
+          {fileValidationError && <p className={styles.errorMessage}>{fileValidationError}</p>}
         </div>
-        <button type="submit" className={styles.uploadButton} disabled={loading}>
+        <button type="submit" className={styles.uploadButton} disabled={loading || isUploadDisabled}>
           {loading ? 'Uploading...' : <><FaUpload className={styles.icon} /> Upload Document</>}
         </button>
       </form>

@@ -47,7 +47,7 @@ describe('userService', () => {
     const user = await userService.createUser(newUser);
 
     expect(mockedApi.post).toHaveBeenCalledTimes(1);
-    expect(mockedApi.post).toHaveBeenCalledWith('/create_user/', newUser);
+    expect(mockedApi.post).toHaveBeenCalledWith('/users/', newUser);
     expect(user).toEqual(createdUser);
   });
 
@@ -70,7 +70,7 @@ describe('userService', () => {
     const response = await userService.deleteUser(1);
 
     expect(mockedApi.delete).toHaveBeenCalledTimes(1);
-    expect(mockedApi.delete).toHaveBeenCalledWith('/delete_user/1');
+    expect(mockedApi.delete).toHaveBeenCalledWith('/users/1');
     expect(response).toEqual(deleteResponse);
   });
 

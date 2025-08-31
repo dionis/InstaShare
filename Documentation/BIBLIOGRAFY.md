@@ -1,3 +1,6 @@
+## [FastAPI + Supabase Template for LLM SaaS Part 2 - Celery and Pg-vector](https://euclideanai.substack.com/p/fastapi-supabase-template-for-llm-941)
+
+
 ## Avoid error in Jest execution test
 
 - [ts-jest-mock-import-meta AST transformer](https://github.com/ThomZz/ts-jest-mock-import-meta)
@@ -141,3 +144,6 @@ To generate a more detailed coverage report, you can add the --cov-report flag:
 Código
 
     uv run pytest --cov=<your_module_name> --cov-report=term-missing
+
+
+### [How To Use An .env File In Docker Compose](https://www.warp.dev/terminus/docker-compose-env-file)

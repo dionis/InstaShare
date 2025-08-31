@@ -1,17 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { supabase } from '../../services/supabaseClient';
 import { useNavigate } from 'react-router-dom';
 import styles from './Login.module.css';
 import { FcGoogle } from 'react-icons/fc';
 import { FaFacebook, FaLinkedin } from 'react-icons/fa';
-
+import Dashboard from '../Dashboard/Dashboard';
+import { BrowserRouter } from 'react-router-dom';
+import { AuthProvider } from '../../contexts/AuthContext';
 const Login: React.FC = () => {
   const { signInWithOAuth, currentUser, loading } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!loading && currentUser) {
+      navigate('/dashboard');
+    }
+  }, [currentUser, loading, navigate]);
+
   const handleOAuthLogin = async (provider: 'google' | 'facebook' | 'linkedin') => {
     setLoginError(null);
     try {
@@ -42,14 +51,6 @@ const Login: React.FC = () => {
       setLoginError(error.message || "Failed to log in with email and password.");
     }
   };
-
-  if (loading) {
-    return <div className={styles.loading}>Loading...</div>;
-  }
-
-  if (currentUser) {
-     navigate('/dashboard');
-  }
 
   return (
     <div className={styles.loginContainer}>

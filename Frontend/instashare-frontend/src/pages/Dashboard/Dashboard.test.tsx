@@ -4,11 +4,19 @@ import { AuthProvider, useAuth } from '../../contexts/AuthContext';
 import { userService } from '../../services/userService'; // Will be mocked
 import Dashboard from './Dashboard';
 import { BrowserRouter } from 'react-router-dom';
+import { act } from '@testing-library/react';
 
 // Mock the useAuth hook
 jest.mock('../../contexts/AuthContext', () => ({
   AuthProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
-  useAuth: jest.fn(),
+  useAuth: jest.fn(() => ({
+    currentUser: null,
+    session: null,
+    loading: true,
+    signInWithOAuth: jest.fn(),
+    logout: jest.fn(),
+    __setMockLoading: jest.fn(),
+  })),
 }));
 
 // Mock the userService
@@ -33,39 +41,45 @@ describe('Dashboard Component', () => {
     jest.clearAllMocks();
   });
 
-  test('renders loading state correctly', () => {
+  test('renders loading state correctly', async () => {
     mockUseAuth.mockReturnValue({
       currentUser: null,
       session: null,
       loading: true,
       signInWithOAuth: jest.fn(),
       logout: jest.fn(),
+      __setMockLoading: jest.fn(),
     });
-    render(
-      <BrowserRouter>
-        <AuthProvider>
-          <Dashboard />
-        </AuthProvider>
-      </BrowserRouter>
-    );
+    await act(async () => {
+      render(
+        <BrowserRouter>
+          <AuthProvider>
+            <Dashboard />
+          </AuthProvider>
+        </BrowserRouter>
+      );
+    });
     expect(screen.getByText('Loading dashboard...')).toBeInTheDocument();
   });
 
-  test('renders unauthorized message when not authenticated', () => {
+  test('renders unauthorized message when not authenticated', async () => {
     mockUseAuth.mockReturnValue({
       currentUser: null,
       session: null,
       loading: false,
       signInWithOAuth: jest.fn(),
       logout: jest.fn(),
+      __setMockLoading: jest.fn(),
     });
-    render(
-      <BrowserRouter>
-        <AuthProvider>
-          <Dashboard />
-        </AuthProvider>
-      </BrowserRouter>
-    );
+    await act(async () => {
+      render(
+        <BrowserRouter>
+          <AuthProvider>
+            <Dashboard />
+          </AuthProvider>
+        </BrowserRouter>
+      );
+    });
     expect(screen.getByText('Please log in to view the dashboard.')).toBeInTheDocument();
   });
 
@@ -86,19 +100,22 @@ describe('Dashboard Component', () => {
       loading: false,
       signInWithOAuth: jest.fn(),
       logout: jest.fn(),
+      __setMockLoading: jest.fn(),
     });
 
     // Mock userService.getUserById if it were called, but Dashboard.tsx currently mocks it internally for display
     // For a real backend integration, this mock would be crucial:
     // (userService.getUserById as jest.Mock).mockResolvedValue({ id: 0, name: 'Test User', email: 'test@example.com', phone: '', responsability: '', role: 'authenticated' });
 
-    render(
-      <BrowserRouter>
-        <AuthProvider>
-          <Dashboard />
-        </AuthProvider>
-      </BrowserRouter>
-    );
+    await act(async () => {
+      render(
+        <BrowserRouter>
+          <AuthProvider>
+            <Dashboard />
+          </AuthProvider>
+        </BrowserRouter>
+      );
+    });
 
     await waitFor(() => {
       expect(screen.getByText('Welcome to InstaShare Dashboard')).toBeInTheDocument();
@@ -123,19 +140,22 @@ describe('Dashboard Component', () => {
       loading: false,
       signInWithOAuth: jest.fn(),
       logout: jest.fn(),
+      __setMockLoading: jest.fn(),
     });
 
     // In Dashboard.tsx, the user data fetching is currently simulated. 
     // If it were a real userService call, you'd mock it like this:
     // (userService.getUserById as jest.Mock).mockRejectedValue(new Error('API Error'));
 
-    render(
-      <BrowserRouter>
-        <AuthProvider>
-          <Dashboard />
-        </AuthProvider>
-      </BrowserRouter>
-    );
+    await act(async () => {
+      render(
+        <BrowserRouter>
+          <AuthProvider>
+            <Dashboard />
+          </AuthProvider>
+        </BrowserRouter>
+      );
+    });
     
     // Since the error is currently internal to Dashboard's simulated fetch, we check for the explicit message
     await waitFor(() => {

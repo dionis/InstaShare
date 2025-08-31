@@ -259,8 +259,10 @@ async def inicialize_document_compresion_job_authenticated(document_id: int, doc
 async def list_all_users(offset: int = 0, limit: int = 100, user_service: UserService = Depends(get_user_service)):
     try:
         users = await user_service.list_users(offset, limit)
+        print(f"Users: {users}")
         return users
     except Exception as e:
+        print(f"Error listing users: {e}")
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 @app.get("/users/authenticated/", response_model=List[User], tags=["Users", "Authenticated"])
@@ -296,7 +298,7 @@ async def create_new_user(user: UserCreate, user_service: UserService = Depends(
     try:
         created_user = await user_service.create_user(user)
         return created_user
-    except Exception as e:
+    except Exception as e:        
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 @app.post("/users/authenticated/", response_model=User, tags=["Users", "Authenticated"])
@@ -339,6 +341,7 @@ async def delete_existing_user(user_id: int, user_service: UserService = Depends
 async def delete_existing_user_authenticated(user_id: int, user_service: UserService = Depends(get_user_service), current_user: User = Depends(get_current_user)):
     try:
         result = await user_service.delete_user(user_id)
+        print(f"Result: {result}")
         return result
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

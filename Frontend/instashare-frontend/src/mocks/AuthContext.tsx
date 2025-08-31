@@ -14,7 +14,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(false); // Set to false for immediate testing
+  const [loading, setLoading] = useState(true); // Start as loading, like the real AuthContext
 
   const signInWithOAuth = jest.fn(async (provider: 'google' | 'facebook' | 'linkedin') => {
     console.log(`Mock signInWithOAuth called for ${provider}`);
@@ -37,13 +37,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
     setCurrentUser(mockUser);
     setSession(mockSession);
+    setLoading(false); // Set loading to false after sign in
   });
 
   const logOut = jest.fn(async () => {
     console.log("Mock logOut called");
     setCurrentUser(null);
     setSession(null);
+    setLoading(false); // Set loading to false after sign out
   });
+
+  // Helper to control the loading state from tests
+  const __setMockLoading = (isLoading: boolean) => {
+    setLoading(isLoading);
+  };
 
   const value = {
     currentUser,
@@ -51,6 +58,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     loading,
     signInWithOAuth,
     logOut,
+    __setMockLoading, // Expose helper for tests
   };
 
   return (

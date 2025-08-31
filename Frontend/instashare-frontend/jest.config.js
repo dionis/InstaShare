@@ -2,17 +2,6 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: "jest-environment-jsdom",
-  globals: {
-    "import": {
-      "meta": {
-        env: {
-          VITE_SUPABASE_URL: "http://localhost:54321",
-          VITE_SUPABASE_ANON_KEY: "test-key",
-          VITE_API_URL: "http://localhost:8000",
-        },
-      },
-   }
-  },
   transform: {
     '^.+\\.(ts|tsx)$': [
       'ts-jest',
@@ -28,13 +17,11 @@ module.exports = {
           before: [
             {
               path: 'node_modules/ts-jest-mock-import-meta',  // or, alternatively, 'ts-jest-mock-import-meta' directly, without node_modules.
-              options: { metaObjectReplacement: { 
-                url: 'https://www.url.com',
-                env: {
-                VITE_API_URL: 'https://www.url.com',
-               } 
-              }
-             }
+              options: { metaObjectReplacement: { env: {
+                VITE_SUPABASE_URL: "http://localhost:54321",
+                VITE_SUPABASE_ANON_KEY: "test-key",
+                VITE_API_URL: "http://localhost:8000",
+              }}}
             }
           ]
         }
@@ -50,6 +37,7 @@ module.exports = {
     "\\.css$": "identity-obj-proxy",
     "^@/(.*)$": "<rootDir>/src/$1",
     "^@/services/api$": "<rootDir>/src/mocks/api.ts",
+    "^@/services/supabaseClient$": "<rootDir>/src/mocks/supabaseClient.ts",
     "^@/contexts/AuthContext$": "<rootDir>/src/mocks/AuthContext.tsx",
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],

@@ -8,6 +8,7 @@ export interface User {
   responsability: string;
   role: string;
   password?: string; // Only for creation/update, not typically returned
+  confirmPassword?: string; // For frontend validation only
   created_at?: string;
   updated_at?: string;
   deleted_at?: string;
@@ -49,7 +50,7 @@ export const userService = {
   },
 
   createUser: async (userData: Omit<User, 'id' | 'role' | 'created_at' | 'updated_at' | 'deleted_at'>): Promise<User> => {
-    const response = await api.post<User>('/create_user/', userData);
+    const response = await api.post<User>('/users/', userData);
     return response.data;
   },
 
@@ -59,12 +60,15 @@ export const userService = {
   },
 
   deleteUser: async (id: number): Promise<DeleteResponse> => {
-    const response = await api.delete<DeleteResponse>(`/delete_user/${id}`);
+    const response = await api.delete<DeleteResponse>(`/users/${id}`);
     return response.data;
   },
 
   getDocumentsUploadedByUser: async (id: number): Promise<UserDocumentsResponse> => {
-    const response = await api.get<UserDocumentsResponse>(`/documents_upload_by_user/${id}`);
+    if (id === undefined || isNaN(id)) {
+      return Promise.resolve({ id: 0, name: '', email: '', phone: '', responsability: '', role: '', upload_documents: []} as UserDocumentsResponse); // Return an empty object that conforms to UserDocumentsResponse
+    }
+    const response = await api.get<UserDocumentsResponse>(`/uploaded_documents/${id}`);
     return response.data;
   },
 

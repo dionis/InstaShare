@@ -2,6 +2,7 @@ import React from 'react';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { AuthProvider, useAuth } from '../../contexts/AuthContext'; // Import from actual context, but it will be mocked by Jest
 import Login from './Login';
+import { MemoryRouter } from 'react-router-dom';
 
 // Mock the useAuth hook to control authentication state during tests
 jest.mock('../../contexts/AuthContext', () => ({
@@ -11,30 +12,25 @@ jest.mock('../../contexts/AuthContext', () => ({
   useAuth: jest.fn(),
 }));
 
+// Mock useNavigate separately since it's used directly in the component
+const mockNavigate = jest.fn();
+jest.mock('react-router-dom', () => ({
+  ...jest.requireActual('react-router-dom'),
+  useNavigate: () => mockNavigate,
+}));
+
 const mockUseAuth = useAuth as jest.MockedFunction<typeof useAuth>;
 
 describe('Login Component', () => {
   beforeEach(() => {
     // Reset mocks before each test
     mockUseAuth.mockReset();
+    mockNavigate.mockReset(); // Reset mockNavigate as well
   });
 
-  test('renders loading state correctly', () => {
-    mockUseAuth.mockReturnValue({
-      currentUser: null,
-      session: null,
-      loading: true,
-      signInWithOAuth: jest.fn(),
-      logout: jest.fn(),
-    });
-    render(
-      <AuthProvider>
-        <Login />
-      </AuthProvider>
-    );
-    expect(screen.getByText('Loading...')).toBeInTheDocument();
-  });
-
+  // Since Login.tsx no longer shows 'Loading...' directly due to rendering changes,
+  // this test is no longer relevant in its current form and will be removed.
+ 
   test('renders welcome message when authenticated', () => {
     mockUseAuth.mockReturnValue({
       currentUser: {
@@ -52,11 +48,15 @@ describe('Login Component', () => {
       logout: jest.fn(),
     });
     render(
-      <AuthProvider>
-        <Login />
-      </AuthProvider>
+      <MemoryRouter>
+        <AuthProvider>
+          <Login />
+        </AuthProvider>
+      </MemoryRouter>
     );
-    expect(screen.getByText('Welcome, Test User!')).toBeInTheDocument();
+    // Since navigate is called in a useEffect, we need to wait for it
+    // Alternatively, we could mock the useNavigate hook to assert its call
+    expect(mockNavigate).toHaveBeenCalledWith('/dashboard');
   });
 
   test('renders login buttons when unauthenticated', () => {
@@ -68,9 +68,11 @@ describe('Login Component', () => {
       logout: jest.fn(),
     });
     render(
-      <AuthProvider>
-        <Login />
-      </AuthProvider>
+      <MemoryRouter>
+        <AuthProvider>
+          <Login />
+        </AuthProvider>
+      </MemoryRouter>
     );
     expect(screen.getByText('Login to InstaShare')).toBeInTheDocument();
     expect(screen.getByRole('button', { name: /Sign in with Google/i })).toBeInTheDocument();
@@ -88,9 +90,11 @@ describe('Login Component', () => {
       logout: jest.fn(),
     });
     render(
-      <AuthProvider>
-        <Login />
-      </AuthProvider>
+      <MemoryRouter>
+        <AuthProvider>
+          <Login />
+        </AuthProvider>
+      </MemoryRouter>
     );
     fireEvent.click(screen.getByRole('button', { name: /Sign in with Google/i }));
     expect(mockSignInWithOAuth).toHaveBeenCalledTimes(1);
@@ -107,9 +111,11 @@ describe('Login Component', () => {
       logout: jest.fn(),
     });
     render(
-      <AuthProvider>
-        <Login />
-      </AuthProvider>
+      <MemoryRouter>
+        <AuthProvider>
+          <Login />
+        </AuthProvider>
+      </MemoryRouter>
     );
     fireEvent.click(screen.getByRole('button', { name: /Sign in with Facebook/i }));
     expect(mockSignInWithOAuth).toHaveBeenCalledTimes(1);
@@ -126,9 +132,11 @@ describe('Login Component', () => {
       logout: jest.fn(),
     });
     render(
-      <AuthProvider>
-        <Login />
-      </AuthProvider>
+      <MemoryRouter>
+        <AuthProvider>
+          <Login />
+        </AuthProvider>
+      </MemoryRouter>
     );
     fireEvent.click(screen.getByRole('button', { name: /Sign in with LinkedIn/i }));
     expect(mockSignInWithOAuth).toHaveBeenCalledTimes(1);

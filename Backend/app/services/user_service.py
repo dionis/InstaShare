@@ -48,7 +48,7 @@ class UserService:
         return UserModel(**data[1][0])
 
     async def delete_user(self, user_id: int) -> UserSchema:
-        data, count = self.supabase.from_('users').update({"deleted_at": datetime.utcnow()}).eq("id", user_id).execute()
+        data, count = self.supabase.from_('users').update({"deleted_at":str( datetime.utcnow())}).eq("id", user_id).execute()
         return {"action": "deleted", "message": "User deleted"}
 
     async def get_documents_uploaded_by_user(self, user_id: int) -> list[DocumentSchema]:

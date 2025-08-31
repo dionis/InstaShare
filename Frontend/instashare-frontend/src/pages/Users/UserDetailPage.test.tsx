@@ -196,39 +196,43 @@ describe('UserDetailPage', () => {
     });
   });
 
-  // test('handles role assignment', async () => {
-  //   // @ts-ignore
-  //   jest.spyOn(require('react-router-dom'), 'useParams').mockReturnValue({ id: '1' });
-  //   jest.spyOn(window, 'confirm').mockReturnValue(true);
+  test('handles role assignment', async () => {
+    // @ts-ignore
+    jest.spyOn(require('react-router-dom'), 'useParams').mockReturnValue({ id: '1' });
+    jest.spyOn(window, 'confirm').mockReturnValue(true);
 
-  //   renderComponent('/dashboard/users/:id', ['/dashboard/users/1']);
-  //   await screen.findByLabelText('Name:'); // Wait for form to be rendered
+    renderComponent('/dashboard/users/:id', ['/dashboard/users/1']);
+    await screen.findByLabelText('Name:'); // Wait for form to be rendered
 
-  //   await waitFor(() => {
-  //     expect(screen.getByText('Assign Role')).toBeInTheDocument();
-  //   });
+    await waitFor(() => {
+      expect(screen.getByText('Assign Role')).toBeInTheDocument();
+    });
     
-  //   // Assuming a role is selected (default is 'user' but can be changed for test)
-  //   userEvent.selectOptions(screen.getByLabelText('Role:'), 'admin');
-  //   userEvent.click(screen.getByText('Assign Role'));
+    // Assuming a role is selected (default is 'user' but can be changed for test)
+    userEvent.selectOptions(screen.getByLabelText('Role:'), 'admin');
+    userEvent.click(screen.getByText('Assign Role'));
 
-  //   await waitFor(() => {
-  //     expect(userService.assignRoleToUser).toHaveBeenCalledWith(1, 1); // Placeholder roleId
-  //     expect(screen.getByText(`Role 'admin' assigned successfully!`)).toBeInTheDocument();
-  //   });
-  // });
+    await waitFor(() => {
+      expect(userService.assignRoleToUser).toHaveBeenCalledWith(1, 1); // Placeholder roleId
+      expect(screen.getByText(`Role 'admin' assigned successfully!`)).toBeInTheDocument();
+    });
+  });
 
-  // test('navigates back to user list', async () => {
-  //   // @ts-ignore
-  //   jest.spyOn(require('react-router-dom'), 'useParams').mockReturnValue({ id: '1' });
+  test('navigates back to user list', async () => {
+    // @ts-ignore
+    jest.spyOn(require('react-router-dom'), 'useParams').mockReturnValue({ id: '1' });
 
-  //   renderComponent('/dashboard/users/:id', ['/dashboard/users/1']);
-  //   await screen.findByLabelText('Name:'); // Wait for form to be rendered
+    renderComponent('/dashboard/users/:id', ['/dashboard/users/1']);
+    await screen.findByLabelText('Name:'); // Wait for form to be rendered
 
-  //   await waitFor(() => {
-  //     expect(screen.getByText('Back to List')).toBeInTheDocument();
-  //   });
-  //   userEvent.click(screen.getByText('Back to List'));
-  //   expect(mockNavigate).toHaveBeenCalledWith('/dashboard/users');
-  // });
+    await waitFor(() => {
+      expect(screen.getByText('Back to List')).toBeInTheDocument();
+    });
+
+    userEvent.click(screen.getByText('Back to List'));
+
+    await waitFor(() => {
+       expect(mockNavigate).toHaveBeenCalledWith('/dashboard/users');
+    });
+  });
 });

@@ -22,11 +22,12 @@ RUN uv sync --frozen
 
 # Copy application code
 COPY ./app ./app
-COPY ./specs ./specs
+#COPY ./specs ./specs
 
 # Expose port
 EXPOSE 8000
 
 # Command to run uvicorn with hot reload
-WORKDIR "app/core/"
-CMD ["celery", "-A", "tasks", "worker", "--loglevel=info"]
+WORKDIR "app/core/sheduler_tasks"
+CMD ["celery", "-A", "tasks", "worker", "--loglevel=info", "&"]
+CMD ["celery", "-A", "tasks", "beat", "--loglevel=info", "&"]

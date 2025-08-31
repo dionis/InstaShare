@@ -8,7 +8,7 @@ services:
       - '6379:6379'
     expose:
       - '6379' 
-    command: redis-server --save 20 1 --loglevel warning --requirepass {REDIS_SERVICES_PASSWORD}
+    #command: redis-server --save 20 1 --loglevel warning --requirepass {REDIS_SERVICES_PASSWORD}
     #command: redis-server --save 20 1 --loglevel warning
     volumes: 
       - redis-instashare:/data

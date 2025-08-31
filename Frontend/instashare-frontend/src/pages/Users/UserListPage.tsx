@@ -17,7 +17,6 @@ const UserListPage: React.FC = () => {
         const fetchedUsers = await userService.getUsers();
         setUsers(fetchedUsers);
       } catch (err) {
-        console.error("Error fetching users:", err);
         setError("Failed to load users.");
       } finally {
         setLoading(false);

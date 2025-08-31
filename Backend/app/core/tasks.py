@@ -2,10 +2,14 @@ from celery import Celery
 from celery.schedules import crontab
 from datetime import date
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 
 appSchedulerManagement = Celery('my_tasks', 
-             broker='redis://:eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81@localhost:6379/0',
-             backend='redis://:eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81@localhost:6379/0')
+             broker='redis://default:eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81@localhost:6379/0',
+             backend='redis://default:eYVX7EwVmmxKPCDmwMtyKVge8oLd2t81@localhost:6379/0')
 
 @appSchedulerManagement.on_after_configure.connect
 def setup_periodic_tasks(sender: Celery, **kwargs):

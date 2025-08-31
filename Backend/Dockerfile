@@ -22,7 +22,7 @@ RUN uv sync --frozen
 
 # Copy application code
 COPY ./app ./app
-COPY ./specs ./specs
+#COPY ./specs ./specs
 
 # Expose port
 EXPOSE 8000

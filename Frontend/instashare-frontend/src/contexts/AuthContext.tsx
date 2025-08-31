@@ -8,6 +8,7 @@ interface AuthContextType {
   loading: boolean;
   signInWithOAuth: (provider: 'google' | 'facebook' | 'linkedin') => Promise<void>;
   logout: () => Promise<void>;
+  __setMockLoading?: (loading: boolean) => void; // Or without '?' if it's always required
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);

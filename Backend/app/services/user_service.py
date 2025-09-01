@@ -59,7 +59,8 @@ class UserService:
             # Create user in your database
             user_data = user.model_dump(exclude={'password'}) # Exclude password from database insert
             user_data['hashed_password'] = user.hashed_password # Ensure hashed password is used
-
+                   
+            
             data, count = self.supabase.from_('users').insert(user_data).execute()
             return UserModel(**data[1][0])
         except AuthApiError as e:

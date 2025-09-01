@@ -3,17 +3,19 @@ from datetime import datetime
 from pydantic import BaseModel, EmailStr, Field
 
 class UserBase(BaseModel):
-    name: str
+    username:  Optional[str] = None
     email: EmailStr
     phone: Optional[str] = None
     responsability: Optional[str] = None
+    
+   
 
 class UserCreate(UserBase):
-    password: str = Field(..., min_length=8) # Plain password for Supabase auth
-    hashed_password: str # Hashed password to store in your database
+    password: str # Plain password for Supabase auth
+    hashed_password: Optional[str] = None # Hashed password to store in your database
 
 class UserUpdate(UserBase):
-    name: Optional[str] = None
+    username: Optional[str] = None
     email: Optional[EmailStr] = None
     password: Optional[str] = None
 

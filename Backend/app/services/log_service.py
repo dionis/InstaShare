@@ -14,7 +14,7 @@ class LogService:
         self.supabase: Client = supabase
 
     async def create_log(self, event: str, user_id: Optional[int] = None, event_description: Optional[str] = None) -> LogSchema:
-        log_data = {"event": event, "user_id": user_id, "event_description": event_description, "shared_date": datetime.utcnow()}
+        log_data = {"event": event, "user_id": user_id, "event_description": event_description, "created_at": str(datetime.utcnow())}
         data, count = self.supabase.from_('logs').insert(log_data).execute()
         return LogModel(**data[1][0])
 

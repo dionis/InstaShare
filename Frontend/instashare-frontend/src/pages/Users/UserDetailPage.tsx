@@ -10,7 +10,7 @@ const UserDetailPage: React.FC = () => {
   const isNewUser = id === 'new';
 
   const [user, setUser] = useState<Partial<User>>({
-    name: '',
+    username: '',
     email: '',
     phone: '',
     responsability: '',
@@ -61,7 +61,7 @@ const UserDetailPage: React.FC = () => {
 
     try {
       if (isNewUser) {
-        if (!user.name || !user.email || !user.password || !user.responsability) {
+        if (!user.username || !user.email || !user.password || !user.responsability) {
           throw new Error("Please fill in all required fields.");
         }
         if (user.password !== user.confirmPassword) {
@@ -70,7 +70,7 @@ const UserDetailPage: React.FC = () => {
           return; // Stop form submission
         }
         await userService.createUser({ 
-          name: user.name, 
+          username: user.username, 
           email: user.email, 
           phone: user.phone || '', 
           responsability: user.responsability, 
@@ -145,7 +145,7 @@ const UserDetailPage: React.FC = () => {
     <div className={styles.container}>
       {/* <Navbar /> */}
       <div className={styles.header}>
-        <h1>{isNewUser ? 'Create New User' : `User Details for ${user.name || user.email}`}</h1>
+        <h1>{isNewUser ? 'Create New User' : `User Details for ${user.username || user.email}`}</h1>
       </div>
       <form onSubmit={handleSubmit} className={styles.form}>
         <div className={styles.inputGroup}>
@@ -153,8 +153,8 @@ const UserDetailPage: React.FC = () => {
           <input
             type="text"
             id="name"
-            name="name"
-            value={user.name || ''}
+            name="username"
+            value={user.username || ''}
             onChange={handleChange}
             required           
           />

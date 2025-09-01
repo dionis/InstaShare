@@ -299,6 +299,7 @@ async def get_user_by_id_authenticated(user_id: int, user_service: UserService =
 @app.post("/users/", response_model=User)
 async def create_new_user(user: UserCreate, user_service: UserService = Depends(get_user_service)):
     try:
+        print(f"Creating new user: {user}")
         created_user = await user_service.create_user(user)
         return created_user
     except Exception as e:        

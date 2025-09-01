@@ -14,8 +14,8 @@ class DocumentService:
         #self.supabase: Client = create_client(supabase_url, supabase_key)
         self.supabase: Client = supabase
 
-    async def upload_document_info(self, document: DocumentModel) -> Document:
-        data, count = self.supabase.from_('documents').insert(document.model_dump()).execute()
+    async def upload_document_info(self, document: DocumentCreate) -> Document:
+        data, count = self.supabase.from_('documents').insert(document.model_dump(by_alias=True)).execute()
         return DocumentModel(**data[1][0])
 
     async def upload_document_file(self, document_id: int, name: str, file_type: str, file: UploadFile) -> Document:
@@ -32,21 +32,28 @@ class DocumentService:
         
         #response_with_data = self.supabase.from_('documents').update({"uploaded_at": str(datetime.utcnow()), "status": DocumentStatus.uploaded, "size": str(file_size)}).eq("id", document_id).execute()
 
-        document_data = DocumentCreate(name=name, type=file_type, size= str(file_size),  status=DocumentStatus.uploaded, file_url=public_url)
+        document_data = DocumentCreate(
+                            name = name, 
+                            type = file_type, 
+                            size = str(file_size),  
+                            status = DocumentStatus.uploaded, 
+                            file_url = public_url
+                    )
   
         print(f"Document data: {document_data.model_dump()}")
         
-        data, count = self.supabase.from_('documents').insert(document_data.model_dump()).execute()
+        data, count = self.supabase.from_('documents').insert(document_data.model_dump(by_alias=True)).execute()
         return DocumentModel(**data[1][0])
         #return document_data
 
     async def delete_document(self, document_id: int) -> Document:
         # Perform a soft delete by updating 'deleted_at'
-        data, count = self.supabase.from_('documents').update({"deleted_at": datetime.utcnow()}).eq("id", document_id).execute()
+        data, count = self.supabase.from_('documents').update({"deleted_at": datetime.utcnow().isoformat()}).eq("id", document_id).execute()
         return {"action": "deleted", "message": "Document deleted"}
 
-    async def update_document_info(self, document_id: int, document: DocumentModel) -> DocumentUpdate:
-        data, count = self.supabase.from_('documents').update(document.model_dump(exclude_unset=True)).eq("id", document_id).execute()
+    async def update_document(self, document_id: int, document_update_data: DocumentUpdate) -> DocumentModel:
+        print(f"\n\n\n <==== Updating document {document_id} with data: {document_update_data.model_dump(exclude_unset=True)}===>\n\n\n")
+        data, count = self.supabase.from_('documents').update(document_update_data.model_dump(exclude_unset=True)).eq("id", document_id).execute()
         return DocumentModel(**data[1][0])
 
     async def list_documents(self) -> List[Document]:

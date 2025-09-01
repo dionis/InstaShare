@@ -220,6 +220,7 @@ const UserDetailPage: React.FC = () => {
             maxLength={20}
             pattern="[0-9]{7,20}" // Assuming phone numbers are 7-20 digits and only numbers
             title="Please enter only digits for the phone number (7-20 characters)"
+            inputMode="numeric" // Added to enforce numeric keyboard on mobile devices
           />
           <small className={styles.inputHint}>Enter 7-20 digits for the phone number.</small>
         </div>

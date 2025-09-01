@@ -49,7 +49,7 @@ def run_migrations_offline() -> None:
     """
     url = config.get_main_option("sqlalchemy.url")
     if url is None:
-        url = os.environ.get("SUPABASE_URL") or os.environ.get("DATABASE_URL", "postgresql://user:password@localhost:5432/instashare_db")
+        url = os.environ.get("SUPABASE_URL_ALEMBIC") or os.environ.get("DATABASE_URL", "postgresql://user:password@localhost:5432/instashare_db")
     if url and url.startswith("https://"):
         url = url.replace("https://", "postgresql://", 1)
     context.configure(
@@ -73,7 +73,7 @@ def run_migrations_online() -> None:
     configuration = config.get_section(config.config_ini_section, {})
     url = configuration.get("sqlalchemy.url")
     if url is None:
-        url = os.environ.get("SUPABASE_URL") or os.environ.get("DATABASE_URL", "postgresql://user:password@localhost:5432/instashare_db")
+        url = os.environ.get("SUPABASE_URL_ALEMBIC") or os.environ.get("DATABASE_URL", "postgresql://user:password@localhost:5432/instashare_db")
     if url and url.startswith("https://"):
         url = url.replace("https://", "postgresql://", 1)
     configuration["sqlalchemy.url"] = url # Update configuration with resolved URL

@@ -84,7 +84,7 @@ const DocumentUploadPage: React.FC = () => {
       // A more robust backend might return the ID after the info upload.
 
       // Step 2: Upload the actual file
-      const fileUploadResponse = await documentService.uploadDocumentFile(tempDocumentId, selectedFile);
+      const fileUploadResponse = await documentService.uploadDocumentFile(tempDocumentId, documentName, documentType, selectedFile);
       setMessage(`Document '${fileUploadResponse.name}' uploaded successfully!`);
       navigate('/dashboard/my-documents'); // Redirect to user's documents
 

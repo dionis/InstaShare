@@ -23,7 +23,7 @@ describe('documentService', () => {
     const response = await documentService.uploadDocumentInfo(docId, docInfo);
 
     expect(mockedApi.post).toHaveBeenCalledTimes(1);
-    expect(mockedApi.post).toHaveBeenCalledWith(`/upload_document_file/${docId}`, docInfo);
+    expect(mockedApi.post).toHaveBeenCalledWith(`/documents/upload_document_file/${docId}`, docInfo);
     expect(response).toEqual(mockResponse);
   });
 
@@ -41,7 +41,7 @@ describe('documentService', () => {
     const response = await documentService.uploadDocumentFile(docId, mockFile);
 
     expect(mockedApi.post).toHaveBeenCalledTimes(1);
-    expect(mockedApi.post).toHaveBeenCalledWith(`/upload_document_file/${docId}`, expect.any(FormData), {
+    expect(mockedApi.post).toHaveBeenCalledWith(`/documents/upload_document_file/${docId}`, expect.any(FormData), {
       headers: {
         'Content-Type': 'multipart/form-data',
       },

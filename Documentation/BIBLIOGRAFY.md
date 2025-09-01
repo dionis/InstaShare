@@ -147,3 +147,13 @@ Código
 
 
 ### [How To Use An .env File In Docker Compose](https://www.warp.dev/terminus/docker-compose-env-file)
+
+
+#### Information about Alembic migrations
+
+# First recreations
+- `uv run alembic revision --autogenerate -m "Add file_url and size to Document"` 
+
+
+## After update the database
+- ` alembic upgrade head`

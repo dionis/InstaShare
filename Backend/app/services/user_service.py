@@ -4,6 +4,7 @@ from models.user import User as UserModel
 from models.document import Document as DocumentModel
 from schemas.user import User as UserSchema, UserCreate, UserUpdate
 from schemas.document import Document as DocumentSchema
+from gotrue.errors import AuthApiError
 #from sqlalchemy.orm import Session
 import os
 from datetime import datetime
@@ -39,9 +40,36 @@ class UserService:
             return user_model
         return None
 
-    async def create_user(self, user: UserModel) -> UserSchema:
-        data, count = self.supabase.from_('users').insert(user.model_dump()).execute()
-        return UserModel(**data[1][0])
+    async def create_user(self, user: UserCreate) -> UserSchema:
+        try:
+            # Create user in Supabase auth
+            auth_response = self.supabase.auth.sign_up({
+                "email": user.email,
+                "password": user.password # Use the plain password for Supabase auth
+            })
+
+            if auth_response.user is None:
+                raise AuthApiError("Supabase sign up failed", "", 400)
+
+            # Hash the password for your database (this should be done before passing to service)
+            # For now, let's assume user.hashed_password is already set if coming from an endpoint
+            # Or, if user.password is provided, you would hash it here.
+            # For simplicity, I'm using the passed hashed_password, but in a real app, hash user.password
+
+            # Create user in your database
+            user_data = user.model_dump(exclude={'password'}) # Exclude password from database insert
+            user_data['hashed_password'] = user.hashed_password # Ensure hashed password is used
+
+            data, count = self.supabase.from_('users').insert(user_data).execute()
+            return UserModel(**data[1][0])
+        except AuthApiError as e:
+            # Handle Supabase auth errors
+            print(f"Supabase Auth Error: {e}")
+            raise e
+        except Exception as e:
+            # Handle other potential errors
+            print(f"Error creating user: {e}")
+            raise e
 
     async def update_user(self, user_id: int, user: UserModel) -> UserSchema:
         data, count = self.supabase.from_('users').update(user.model_dump(exclude_unset=True)).eq("id", user_id).execute()

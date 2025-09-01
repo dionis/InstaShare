@@ -1,6 +1,6 @@
-from typing import Optional
+from typing import Optional, List
 from datetime import datetime
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 class UserBase(BaseModel):
     name: str
@@ -9,7 +9,8 @@ class UserBase(BaseModel):
     responsability: Optional[str] = None
 
 class UserCreate(UserBase):
-    password: str
+    password: str = Field(..., min_length=8) # Plain password for Supabase auth
+    hashed_password: str # Hashed password to store in your database
 
 class UserUpdate(UserBase):
     name: Optional[str] = None
@@ -24,6 +25,7 @@ class User(UserBase):
     
 
     role:  Optional[str] = None
+    hashed_password: Optional[str] = None
 
     class Config:
         from_attributes = True

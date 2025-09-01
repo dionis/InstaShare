@@ -21,6 +21,7 @@ dependencies = [
     "python-jose>=3.5.0",
     "pytest-asyncio>=1.1.0",
     "celery[librabbitmq,redis]>=5.5.3",
+    "gotrue>=2.12.4",
 ]
 
 [project.optional-dependencies]

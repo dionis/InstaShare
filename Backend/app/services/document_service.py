@@ -18,14 +18,27 @@ class DocumentService:
         data, count = self.supabase.from_('documents').insert(document.model_dump()).execute()
         return DocumentModel(**data[1][0])
 
-    async def upload_document_file(self, document_id: int, file: UploadFile) -> Document:
+    async def upload_document_file(self, document_id: int, name: str, file_type: str, file: UploadFile) -> Document:
         # Assuming 'documents' is your storage bucket
         file_path = f"documents/{document_id}/{file.filename}"
+        print(f"Uploading file to {file_path}")
         content = await file.read()
-        self.supabase.storage.from_('documents').upload(file_path, content)
+        file_size = len(content) # Get file size in bytes
 
-        data, count = self.supabase.from_('documents').update({"uploaded_at": datetime.utcnow(), "status": DocumentStatus.uploaded}).eq("id", document_id).execute()
+       # self.supabase.storage.from_('documents').upload(file_path, content)
+        self.supabase.storage.from_('documents').upload(file_path, content, {  'upsert': 'true',}) 
+
+        public_url = self.supabase.storage.from_('documents').get_public_url(file_path)
+        
+        #response_with_data = self.supabase.from_('documents').update({"uploaded_at": str(datetime.utcnow()), "status": DocumentStatus.uploaded, "size": str(file_size)}).eq("id", document_id).execute()
+
+        document_data = DocumentCreate(name=name, type=file_type, size= str(file_size),  status=DocumentStatus.uploaded, file_url=public_url)
+  
+        print(f"Document data: {document_data.model_dump()}")
+        
+        data, count = self.supabase.from_('documents').insert(document_data.model_dump()).execute()
         return DocumentModel(**data[1][0])
+        #return document_data
 
     async def delete_document(self, document_id: int) -> Document:
         # Perform a soft delete by updating 'deleted_at'

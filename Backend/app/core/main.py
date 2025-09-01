@@ -1,5 +1,5 @@
 import os
-from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, APIRouter
+from fastapi import FastAPI, Depends, HTTPException, status, UploadFile, APIRouter, Form, File
 from fastapi.security import OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -30,6 +30,8 @@ from supabase import Client
 from celery import Celery
 from celery.schedules import crontab
 from datetime import date
+from passlib.context import CryptContext
+from gotrue.errors import AuthApiError
 
 
 settings = Settings()
@@ -119,7 +121,7 @@ async def upload_document_info(document_id: int, document: DocumentCreate, docum
     try:
         created_document = await document_service.upload_document_info(document_id, document)
         return created_document
-    except Exception as e:
+    except Exception as e:        
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 @app.post("/documents/authenticated/upload_document/{document_id}", response_model=Document, tags=["Documents", "Authenticated"])
@@ -131,12 +133,13 @@ async def upload_document_info_authenticated(document_id: int, document: Documen
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 @app.post("/documents/upload_document_file/{document_id}", response_model=Document)
-async def upload_document_file(document_id: int, file: UploadFile, document_service: DocumentService = Depends(get_document_service)):
+async def upload_document_file(document_id: int,  name: str = Form(...), file_type: str = Form(...), file: UploadFile = File(...), document_service: DocumentService = Depends(get_document_service)):
     try:
-        updated_document = await document_service.upload_document_file(document_id, file)
+        updated_document = await document_service.upload_document_file(document_id, name = name, file_type = file_type, file = file)
         return updated_document
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
+        print(f"Error uploading document info: {e}")
+        raise  HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 @app.post("/documents/authenticated/upload_document_file/{document_id}", response_model=Document, tags=["Documents", "Authenticated"])
 async def upload_document_file_authenticated(document_id: int, file: UploadFile, document_service: DocumentService = Depends(get_document_service), current_user: User = Depends(get_current_user)):
@@ -301,11 +304,21 @@ async def create_new_user(user: UserCreate, user_service: UserService = Depends(
     except Exception as e:        
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
-@app.post("/users/authenticated/", response_model=User, tags=["Users", "Authenticated"])
-async def create_new_user_authenticated(user: UserCreate, user_service: UserService = Depends(get_user_service), current_user: User = Depends(get_current_user)):
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+@app.post("/users/authenticated/", response_model=User, status_code=status.HTTP_201_CREATED, tags=["Users", "Authenticated"])
+async def create_user_authenticated(user_create: UserCreate = Depends(), user_service: UserService = Depends(get_user_service), current_user: User = Depends(get_current_user)):
     try:
-        created_user = await user_service.create_user(user)
-        return created_user
+        # Hash the password before passing to service
+        hashed_password = pwd_context.hash(user_create.password)
+        user_create.hashed_password = hashed_password
+
+        # Call the service to create the user, which now includes Supabase auth signup
+        created_user = await user_service.create_user(user_create)
+        # For response, exclude sensitive password fields
+        return User(**created_user.model_dump(exclude={'hashed_password'}))
+    except AuthApiError as e:
+        raise HTTPException(status_code=e.status_code, detail=e.message)
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 

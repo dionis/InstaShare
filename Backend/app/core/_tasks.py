@@ -1,8 +1,13 @@
+import os
 from celery import Celery
 from celery.schedules import crontab
-from datetime import date
+from datetime import date, datetime
 
 from dotenv import load_dotenv
+from supabase import create_client, Client
+from ..db.base import get_supabase_client
+from ..services.log_service import LogService
+from ..schemas.log import LogCreate
 
 load_dotenv()
 
@@ -46,5 +51,21 @@ def add(x, y):
    
 @appSchedulerManagement.task 
 def run_scheduled_compress_file_task(arg):
+    supabase: Client = get_supabase_client()
+    log_service = LogService(supabase)
+    
+    # Log the event
+    log_entry = LogCreate(
+        event="Scheduled Task Execution",
+        user_id=1, # Assuming a default user for scheduled tasks, or pass it as an argument
+        event_description=f"Compress {arg} file execution at: {datetime.utcnow()}"
+    )
+    # The create_log method in LogService expects event, user_id, event_description separately
+    log_service.create_log(
+        event=log_entry.event, 
+        user_id=log_entry.user_id, 
+        event_description=log_entry.event_description
+    )
+    
     return f" Compress {arg} file execution at: {date.today().now}"
 

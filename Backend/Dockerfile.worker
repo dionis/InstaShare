@@ -28,6 +28,6 @@ COPY ./app ./app
 EXPOSE 8000
 
 # Command to run uvicorn with hot reload
-WORKDIR "app/core/sheduler_tasks"
-CMD ["celery", "-A", "tasks", "worker", "--loglevel=info", "&"]
-CMD ["celery", "-A", "tasks", "beat", "--loglevel=info", "&"]
+WORKDIR "app/"
+CMD ["celery", "-A", "sheduler_tasks.app", "worker", "-pool=solo ","--loglevel=info", "&"]
+CMD ["celery", "-A", "sheduler_tasks.app", "beat", "--loglevel=info", "&"]

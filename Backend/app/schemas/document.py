@@ -13,6 +13,7 @@ class DocumentBase(BaseModel):
     type: str
     size: Optional[str] = None
     status: DocumentStatusSchema = DocumentStatusSchema.uploaded
+    file_url: Optional[str] = None
 
 class DocumentCreate(DocumentBase):
     pass
@@ -25,10 +26,11 @@ class DocumentUpdate(DocumentBase):
 
 class Document(DocumentBase):
     id: int
-    created_at: datetime
-    updated_at: datetime
+    created_at: Optional[datetime] = None
+    updated_at: Optional[datetime] = None
     deleted_at: Optional[datetime] = None
-    uploaded_at: datetime
+    uploaded_at: Optional[datetime] = None
+
 
     class Config:
         from_attributes = True

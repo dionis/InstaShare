@@ -61,9 +61,9 @@ def dummy_user_fixture():
     # In a real scenario, you might hash the password
     return {
         "id": 1,
-        "name": "Test User",
+        "username": "Test User",
         "email": "test@example.com",
-        "password": "testpassword",
+        "hashed_password": "testpassword",
         "phone": "1234567890",
         "responsability": "User",
         "created_at": datetime.utcnow(),

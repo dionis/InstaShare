@@ -38,7 +38,7 @@ def test_get_user_by_id_unauthenticated(client: TestClient, mock_user_service: A
     mock_user_service.get_user.assert_called_once_with(1)
 
 def test_create_new_user_unauthenticated(client: TestClient, mock_user_service: AsyncMock):
-    new_user_data = UserCreate(name="New User", email="new@example.com", password="newpassword", phone="1112223333", responsability="Editor")
+    new_user_data = UserCreate(username="New User", email="new@example.com", hash_password="newpassword", phone="1112223333", responsability="Editor")
     created_user_response = User(id=1, created_at=datetime.utcnow(), updated_at=datetime.utcnow(), **new_user_data.model_dump())
     mock_user_service.create_user.return_value = created_user_response
     response = client.post("/users/", json=new_user_data.model_dump())
@@ -108,7 +108,7 @@ def test_get_user_by_id_authenticated(authenticated_client: TestClient, mock_use
     mock_user_service.get_user.assert_called_once_with(dummy_user["id"])
 
 def test_create_new_user_authenticated(authenticated_client: TestClient, mock_user_service: AsyncMock):
-    new_user_data = UserCreate(name="Auth New User", email="auth_new@example.com", password="authnewpassword", phone="9998887777", responsability="Viewer")
+    new_user_data = UserCreate(username="Auth New User", email="auth_new@example.com", hash_password="authnewpassword", phone="9998887777", responsability="Viewer")
     created_user_response = User(id=2, created_at=datetime.utcnow(), updated_at=datetime.utcnow(), **new_user_data.model_dump())
     mock_user_service.create_user.return_value = created_user_response
     response = authenticated_client.post("/users/authenticated/", json=new_user_data.model_dump())
@@ -118,7 +118,7 @@ def test_create_new_user_authenticated(authenticated_client: TestClient, mock_us
 
 def test_update_existing_user_authenticated(authenticated_client: TestClient, mock_user_service: AsyncMock, dummy_user: dict):
     user_update_data = UserUpdate(name="Auth Updated Name")
-    updated_user_response = User(id=dummy_user["id"], name="Auth Updated Name", email=dummy_user["email"], password=dummy_user["password"], created_at=datetime.utcnow(), updated_at=datetime.utcnow())
+    updated_user_response = User(id=dummy_user["id"], name="Auth Updated Name", email=dummy_user["email"], password=dummy_user["hash_password"], created_at=datetime.utcnow(), updated_at=datetime.utcnow())
     mock_user_service.update_user.return_value = updated_user_response
     response = authenticated_client.put(f"/users/authenticated/{dummy_user["id"]}", json=user_update_data.model_dump(exclude_unset=True))
     assert response.status_code == 200

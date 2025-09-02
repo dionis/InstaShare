@@ -142,9 +142,9 @@ async def upload_document_file(document_id: int,  name: str = Form(...), file_ty
         raise  HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
 
 @app.post("/documents/authenticated/upload_document_file/{document_id}", response_model=Document, tags=["Documents", "Authenticated"])
-async def upload_document_file_authenticated(document_id: int, file: UploadFile, document_service: DocumentService = Depends(get_document_service), current_user: User = Depends(get_current_user)):
+async def upload_document_file_authenticated(document_id: int,name: str = Form(...), file_type: str = Form(...), file: UploadFile = File(...), document_service: DocumentService = Depends(get_document_service), current_user: User = Depends(get_current_user)):
     try:
-        updated_document = await document_service.upload_document_file(document_id, file)
+        updated_document = await document_service.upload_document_file(document_id, name = name, file_type = file_type, file = file)
         return updated_document
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))
@@ -168,7 +168,7 @@ async def delete_document_authenticated(document_id: int, document_service: Docu
 @app.put("/documents/{document_id}", response_model=Document)
 async def update_document_info(document_id: int, document: DocumentUpdate, document_service: DocumentService = Depends(get_document_service)):
     try:
-        updated_document = await document_service.update_document_info(document_id, document)
+        updated_document = await document_service.update_document(document_id, document)
         if not updated_document:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found")
         return updated_document
@@ -178,7 +178,7 @@ async def update_document_info(document_id: int, document: DocumentUpdate, docum
 @app.put("/documents/authenticated/{document_id}", response_model=Document, tags=["Documents", "Authenticated"])
 async def update_document_info_authenticated(document_id: int, document: DocumentUpdate, document_service: DocumentService = Depends(get_document_service), current_user: User = Depends(get_current_user)):
     try:
-        updated_document = await document_service.update_document_info(document_id, document)
+        updated_document = await document_service.update_document(document_id, document)
         if not updated_document:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found")
         return updated_document

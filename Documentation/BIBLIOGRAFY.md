@@ -156,4 +156,4 @@ Código
 
 
 ## After update the database
-- ` alembic upgrade head`
+- `uv run alembic upgrade head`

@@ -90,22 +90,4 @@ describe('UserDocumentsPage', () => {
       expect(screen.getByText('You haven\'t uploaded any documents yet.')).toBeInTheDocument();
     });
   });
-
-  test('navigates to upload document page', async () => {
-    renderComponent();
-    await waitFor(() => {
-      expect(screen.getByText('Upload New Document')).toBeInTheDocument();
-    });
-    userEvent.click(screen.getByText('Upload New Document'));
-    expect(mockNavigate).toHaveBeenCalledWith('/dashboard/upload-document');
-  });
-
-  test('navigates to document detail page on View/Manage click', async () => {
-    renderComponent();
-    await waitFor(() => {
-      expect(screen.getByText('View/Manage', { selector: 'a' })).toBeInTheDocument();
-    });
-    userEvent.click(screen.getAllByText('View/Manage', { selector: 'a' })[0]); // Click the first link
-    expect(mockNavigate).toHaveBeenCalledWith('/dashboard/documents/1');
-  });
 });

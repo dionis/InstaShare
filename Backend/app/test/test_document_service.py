@@ -85,7 +85,7 @@ async def test_get_document_by_id(client: TestClient, mock_document_service: Asy
 @pytest.mark.asyncio
 async def test_get_document_shared_users(client: TestClient, mock_document_service: AsyncMock):
     mock_document_service.get_shared_users_for_document.return_value = [
-        UserSchema(id=1, username="User1", email="user1@example.com", phone="123", responsability="user", created_at=datetime.utcnow(), updated_at=datetime.utcnow(), deleted_at=None),
+        UserSchema(id=1, username="User1", email="user1@example.com", phone="123", password="123", responsability="user", created_at=datetime.utcnow(), updated_at=datetime.utcnow(), deleted_at=None),
     ]
     response = client.get("/documents/1/shared_by/users")
     assert response.status_code == 200
@@ -175,7 +175,7 @@ async def test_get_document_by_id_authenticated(authenticated_client: TestClient
 @pytest.mark.asyncio
 async def test_get_document_shared_users_authenticated(authenticated_client: TestClient, mock_document_service: AsyncMock, dummy_user: dict):
     mock_document_service.get_shared_users_for_document.return_value = [
-        UserSchema(id=dummy_user["id"], username=dummy_user["username"], email=dummy_user["email"], phone=dummy_user["phone"], responsability=dummy_user["responsability"], created_at=dummy_user["created_at"], updated_at=dummy_user["updated_at"], deleted_at=dummy_user["deleted_at"])
+        UserSchema(id=dummy_user["id"], username=dummy_user["username"], password=dummy_user["password"], email=dummy_user["email"], phone=dummy_user["phone"], responsability=dummy_user["responsability"], created_at=dummy_user["created_at"], updated_at=dummy_user["updated_at"], deleted_at=dummy_user["deleted_at"])
     ]
     response = authenticated_client.get("/documents/authenticated/1/shared_by/users")
     assert response.status_code == 200

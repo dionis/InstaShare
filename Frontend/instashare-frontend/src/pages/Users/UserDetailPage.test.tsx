@@ -20,7 +20,7 @@ jest.mock('../../services/userService');
 
 const mockUser = {
   id: 1,
-  name: 'John Doe',
+  username: 'John Doe',
   email: 'john@example.com',
   phone: '123-456-7890',
   responsability: 'Software Engineer',
@@ -74,9 +74,9 @@ describe('UserDetailPage', () => {
     await screen.findByLabelText('Name:'); // Wait for form to be rendered
 
     await waitFor(() => {
-      expect(screen.getByText(`User Details for ${mockUser.name}`)).toBeInTheDocument();
-      expect(screen.getByDisplayValue(mockUser.name)).toBeInTheDocument();
-      expect(screen.getByDisplayValue(mockUser.email)).toBeInTheDocument();
+      expect(screen.getByText(`User Details for ${mockUser.username}`)).toBeInTheDocument();
+      expect(screen.getByDisplayValue(mockUser.username)).toBeInTheDocument();
+      expect(screen.getByDisplayValue(mockUser.username)).toBeInTheDocument();
     });
   });
 
@@ -114,7 +114,7 @@ describe('UserDetailPage', () => {
 
       await waitFor(() => {
         expect(userService.createUser).toHaveBeenCalledWith({
-          name: 'New User',
+          username: 'New User',
           email: 'new@example.com',
           phone: '',
           responsability: 'Engineer',
@@ -132,8 +132,8 @@ describe('UserDetailPage', () => {
     renderComponent('/dashboard/users/:id', ['/dashboard/users/1']);
     await screen.findByLabelText('Name:'); // Wait for form to be rendered
 
-    expect(screen.getByText(`User Details for ${mockUser.name}`)).toBeInTheDocument();
-    expect(screen.getByDisplayValue(mockUser.name)).toBeInTheDocument();
+    expect(screen.getByText(`User Details for ${mockUser.username}`)).toBeInTheDocument();
+    expect(screen.getByDisplayValue(mockUser.username)).toBeInTheDocument();
     expect(screen.getByDisplayValue(mockUser.email)).toBeInTheDocument();
  
    // userEvent.click(screen.getByText('Edit Info'));

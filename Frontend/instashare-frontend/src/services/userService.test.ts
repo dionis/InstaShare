@@ -86,7 +86,7 @@ describe('userService', () => {
     const userDocs = await userService.getDocumentsUploadedByUser(1);
 
     expect(mockedApi.get).toHaveBeenCalledTimes(1);
-    expect(mockedApi.get).toHaveBeenCalledWith('/documents_upload_by_user/1');
+    expect(mockedApi.get).toHaveBeenCalledWith('/uploaded_documents/1');
     expect(userDocs).toEqual(mockUserDocuments);
   });
 

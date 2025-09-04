@@ -44,12 +44,13 @@ The backend is built with Python and utilizes the following key technologies:
     - db: A Postgresql container for local deployment and test, in current only use remote supabase deployment
     - api: All backed and FastApi processing request.
     - sheduler-worker: All backed logic for execute a periodical task (since 2 minutes) for finding all upload document zip document and upload egaint to Supabase store. See file (Backend/app/task.py)[Backend/app/task.py]
-    
+
 ### Issues in this version
  - Fix the editing and visualization in frontend.
  - Validate user inpunt in some field.
  - Integrate all authenticate services. 
  - Flutter app in development process.
+ - Not add support for Google / Facebook / LikendIn becasue is need payment support at Supabase platform
 
 ### Directory Structure (`Backend/app`)
 The `app` directory organizes the backend logic into several modules:

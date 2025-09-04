@@ -28,6 +28,29 @@ The backend is built with Python and utilizes the following key technologies:
 *   **Docker / Docker Compose:** Used for containerization, enabling consistent development, testing, and deployment environments.
 *   **GitHub Actions:** Configured for Continuous Integration (CI) to automate testing on code pushes.
 
+## For Deployment and testing processin the platform was hosting in:
+
+- Frontend: [Vercel](https://insta-share-three.vercel.app/)
+- Backend: [Ligthing.ai](https://8000-01k3wgp3gs2dkz20nztgdcgkqn.cloudspaces.litng.ai/docs)
+- Storage: [Supabase](https://supabase.com/)
+   -  Was create a storage module with name "document"
+
+
+ ### About  Docker Deploment - Containers for local deployment and development
+ Read the [Backend/docker-compose.yml](Backend/docker-compose.yml)
+
+  Threre are four image/container:
+    - redis-instashare: For sheduler propouse using with Celery app for execution periodicall task.
+    - db: A Postgresql container for local deployment and test, in current only use remote supabase deployment
+    - api: All backed and FastApi processing request.
+    - sheduler-worker: All backed logic for execute a periodical task (since 2 minutes) for finding all upload document zip document and upload egaint to Supabase store. See file (Backend/app/task.py)[Backend/app/task.py]
+    
+### Issues in this version
+ - Fix the editing and visualization in frontend.
+ - Validate user inpunt in some field.
+ - Integrate all authenticate services. 
+ - Flutter app in development process.
+
 ### Directory Structure (`Backend/app`)
 The `app` directory organizes the backend logic into several modules:
 *   `alembic/`: Contains Alembic migration scripts and environment configurations for managing database schema changes.

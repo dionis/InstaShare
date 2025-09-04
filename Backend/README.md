@@ -31,22 +31,6 @@ Once the file has been zipped, the user of the community site can download the f
 - **Docker** - Containers for local deployment and development
 
 
-### Frontend
-
-
-- **TypeScript** - Statically typed language
-
-
-- **CSS Modules** - Modular styles
-
-
-- **SASS** - CSS preprocessor
-
-
-### Mobile
-
-
-- **Flutter**
 
 
 ## Architecture
@@ -54,7 +38,7 @@ Once the file has been zipped, the user of the community site can download the f
 ```
 
 
-Frontend (TypeScript)     Mobile Apps (Flutter)
+Frontend (TypeScript)     Mobile Apps (Flutter) In develop
 
 
         │                           │

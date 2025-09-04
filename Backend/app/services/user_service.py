@@ -57,7 +57,7 @@ class UserService:
             # For simplicity, I'm using the passed hashed_password, but in a real app, hash user.password
 
             # Create user in your database
-            user_data = user.model_dump(exclude={'password'}) # Exclude password from database insert
+            user_data = user.model_dump() # Exclude password from database insert
             user_data['hashed_password'] = user.hashed_password # Ensure hashed password is used
                    
             

@@ -261,6 +261,7 @@ async def inicialize_document_compresion_job_authenticated(document_id: int, doc
 async def list_all_users(offset: int = 0, limit: int = 100, user_service: UserService = Depends(get_user_service)):
     try:
         users = await user_service.list_users(offset, limit)
+        print(f"Retured result {users}")
         return users
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(e))

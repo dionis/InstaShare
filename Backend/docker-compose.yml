@@ -1,6 +1,18 @@
-version: '3.8'
+#version: '3.8'
 
 services:
+  redis-instashare:
+    image: redis:6.2-alpine
+    restart: always
+    ports:
+      - '6379:6379'
+    expose:
+      - '6379' 
+    #command: redis-server --save 20 1 --loglevel warning --requirepass {REDIS_SERVICES_PASSWORD}
+    #command: redis-server --save 20 1 --loglevel warning
+    volumes: 
+      - redis-instashare:/data
+
   db:
     image: postgres:15-alpine
     environment:
@@ -21,10 +33,20 @@ services:
         - ./app:/app/app
         - ./specs:/app/specs
     env_file:
-      - .env
+      - app/.env
     depends_on:
       - db
 
+  sheduler-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    depends_on:
+      - redis-instashare
+    environment:
+      - REDIS_URL=redis://redis-instashare:6379/0
 volumes:
+  redis-instashare:
+    driver: local
   db_data:
 

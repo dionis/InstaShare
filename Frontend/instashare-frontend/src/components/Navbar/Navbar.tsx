@@ -1,13 +1,15 @@
 import React from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import styles from './Navbar.module.css';
+import { Link } from 'react-router-dom';
+import styles from './Navbar.module.css'; // This import is correct for CSS Modules.
+import { FaCog, FaUserCircle } from 'react-icons/fa';
 
 const Navbar: React.FC = () => {
-  const { currentUser, logOut } = useAuth();
+  const { currentUser, logout } = useAuth();
 
   const handleLogout = async () => {
     try {
-      await logOut();
+      await logout();
     } catch (error) {
       console.error("Error during logout:", error);
     }
@@ -19,18 +21,21 @@ const Navbar: React.FC = () => {
       <div className={styles.navLinks}>
         {currentUser ? (
           <>
-            <span className={styles.userName}>Welcome, {currentUser.displayName || currentUser.email}</span>
+            <Link to="/dashboard/profile" className={styles.navButton}>
+              <FaUserCircle className={styles.icon} /> Mi Perfil
+            </Link>
+            <Link to="/dashboard/settings" className={styles.navButton}>
+              <FaCog className={styles.icon} /> Configuración
+            </Link>
+            <span className={styles.userName}>Welcome, {currentUser.user_metadata?.full_name || currentUser.email}</span>
             <button onClick={handleLogout} className={styles.navButton}>Logout</button>
           </>
         ) : (
-          <a href="/login" className={styles.navButton}>Login</a>
+          <Link to="/login" className={styles.navButton}>Login</Link>
         )}
       </div>
     </nav>
   );
 };
 
-export default Navbar;
-
-
-
+export default Navbar; 

@@ -47,16 +47,23 @@ export interface CompressionJobResponse {
 
 export const documentService = {
   uploadDocumentInfo: async (id: number, documentInfo: Omit<DocumentUploadInfo, 'id'>): Promise<DocumentUploadInfo> => {
-    const response = await api.post<DocumentUploadInfo>(`/upload_document/${id}`, documentInfo);
+    const response = await api.post<DocumentUploadInfo>(`/documents/upload_document_file/${id}`, documentInfo);
     return response.data;
   },
 
   // Note: The contract has two POST /upload_document/:id endpoints. 
   // One for info and one for file upload. This method is for file upload.
-  uploadDocumentFile: async (id: number, file: File): Promise<DocumentUploadInfo> => {
+  uploadDocumentFile: async (
+    id: number, 
+    documentName: string, // Add documentName parameter
+    documentType: string, // Add documentType parameter
+    file: File
+  ): Promise<DocumentUploadInfo> => {
     const formData = new FormData();
     formData.append('file', file);
-    const response = await api.post<DocumentUploadInfo>(`/upload_document/${id}`, formData, {
+    formData.append('name', documentName); // Append document name
+    formData.append('file_type', documentType); // Append document type
+    const response = await api.post<DocumentUploadInfo>(`/documents/upload_document_file/${id}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -96,6 +103,9 @@ export const documentService = {
     return response.data;
   },
 };
+
+
+
 
 
 

@@ -14,8 +14,8 @@ describe('userService', () => {
 
   test('getUsers should fetch a list of users', async () => {
     const mockUsers: UserListResponse = [
-      { id: 1, name: 'John Doe', email: 'john@example.com', phone: '+123', responsability: 'Dev', role: 'user' },
-      { id: 2, name: 'Jane Smith', email: 'jane@example.com', phone: '+456', responsability: 'QA', role: 'admin' },
+      { id: 1, username: 'John Doe', email: 'john@example.com', phone: '+123', responsability: 'Dev', role: 'user' },
+      { id: 2, username: 'Jane Smith', email: 'jane@example.com', phone: '+456', responsability: 'QA', role: 'admin' },
     ];
     mockedApi.get.mockResolvedValueOnce({ data: mockUsers });
 
@@ -27,7 +27,7 @@ describe('userService', () => {
   });
 
   test('getUserById should fetch a single user by ID', async () => {
-    const mockUser: User = { id: 1, name: 'John Doe', email: 'john@example.com', phone: '+123', responsability: 'Dev', role: 'user' };
+    const mockUser: User = { id: 1, username: 'John Doe', email: 'john@example.com', phone: '+123', responsability: 'Dev', role: 'user' };
     mockedApi.get.mockResolvedValueOnce({ data: mockUser });
 
     const user = await userService.getUserById(1);
@@ -39,7 +39,7 @@ describe('userService', () => {
 
   test('createUser should create a new user', async () => {
     const newUser: Omit<User, 'id' | 'role' | 'created_at' | 'updated_at' | 'deleted_at'> = {
-      name: 'New User', email: 'new@example.com', phone: '+789', responsability: 'Designer', password: 'pass123'
+      username: 'New User', email: 'new@example.com', phone: '+789', responsability: 'Designer', password: ''
     };
     const createdUser: User = { ...newUser, id: 3, role: 'user' };
     mockedApi.post.mockResolvedValueOnce({ data: createdUser });
@@ -47,13 +47,13 @@ describe('userService', () => {
     const user = await userService.createUser(newUser);
 
     expect(mockedApi.post).toHaveBeenCalledTimes(1);
-    expect(mockedApi.post).toHaveBeenCalledWith('/create_user/', newUser);
+    expect(mockedApi.post).toHaveBeenCalledWith('/users/', newUser);
     expect(user).toEqual(createdUser);
   });
 
   test('updateUser should update an existing user', async () => {
-    const updatedUserData: Partial<Omit<User, 'id' | 'role' | 'created_at' | 'updated_at' | 'deleted_at'>> = { name: 'Updated Name' };
-    const updatedUser: User = { id: 1, name: 'Updated Name', email: 'john@example.com', phone: '+123', responsability: 'Dev', role: 'user' };
+    const updatedUserData: Partial<Omit<User, 'id' | 'role' | 'created_at' | 'updated_at' | 'deleted_at'>> = { username: 'Updated Name' };
+    const updatedUser: User = { id: 1, username: 'Updated Name', email: 'john@example.com', phone: '+123', responsability: 'Dev', role: 'user' };
     mockedApi.put.mockResolvedValueOnce({ data: updatedUser });
 
     const user = await userService.updateUser(1, updatedUserData);
@@ -70,13 +70,13 @@ describe('userService', () => {
     const response = await userService.deleteUser(1);
 
     expect(mockedApi.delete).toHaveBeenCalledTimes(1);
-    expect(mockedApi.delete).toHaveBeenCalledWith('/delete_user/1');
+    expect(mockedApi.delete).toHaveBeenCalledWith('/users/1');
     expect(response).toEqual(deleteResponse);
   });
 
   test('getDocumentsUploadedByUser should fetch documents for a user', async () => {
     const mockUserDocuments: UserDocumentsResponse = {
-      id: 1, name: 'John Doe', email: 'john@example.com', phone: '+123', responsability: 'Dev', role: 'user',
+      id: 1, username: 'John Doe', email: 'john@example.com', phone: '+123', responsability: 'Dev', role: 'user',
       upload_documents: [
         { id: 101, name: 'doc1', type: 'pdf', size: '1MB', uploaded_at: '2024-01-01' },
       ],
@@ -86,7 +86,7 @@ describe('userService', () => {
     const userDocs = await userService.getDocumentsUploadedByUser(1);
 
     expect(mockedApi.get).toHaveBeenCalledTimes(1);
-    expect(mockedApi.get).toHaveBeenCalledWith('/documents_upload_by_user/1');
+    expect(mockedApi.get).toHaveBeenCalledWith('/uploaded_documents/1');
     expect(userDocs).toEqual(mockUserDocuments);
   });
 
@@ -113,6 +113,9 @@ describe('userService', () => {
     expect(response).toEqual(mockResponse);
   });
 });
+
+
+
 
 
 

@@ -11,7 +11,7 @@
 start:
 
 
-	docker-compose up -d
+	docker-compose --env-file app/.env  up -d --force-recreate
 
 
 

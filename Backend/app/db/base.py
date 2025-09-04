@@ -1,0 +1,60 @@
+from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import sessionmaker, Session
+from sqlalchemy import create_engine
+import os
+from dotenv import load_dotenv
+from supabase import create_client, Client
+from core.config import Settings
+
+load_dotenv()
+
+settings = Settings()
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if not DATABASE_URL:
+    DB_HOST = os.getenv("DB_HOST")
+    DB_PORT = os.getenv("DB_PORT", "5432")
+    DB_NAME = os.getenv("DB_NAME")
+    DB_USER = os.getenv("DB_USER")
+    DB_PASSWORD = os.getenv("DB_PASSWORD")
+    
+    DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+
+engine = create_engine(
+    DATABASE_URL,
+    echo=True,
+    pool_size=10,
+    max_overflow=20,
+    pool_pre_ping=True,
+    connect_args={
+        "sslmode": "require",
+    }
+)
+
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()
+
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
+
+
+def get_supabase_client() -> Client:
+    supabase_url = settings.SUPABASE_URL
+    supabase_key = settings.SUPABASE_KEY
+    supabase_client: Client = create_client(supabase_url, supabase_key)
+    return supabase_client
+
+
+
+
+
+
+
+
+
+

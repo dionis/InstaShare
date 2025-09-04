@@ -2,7 +2,7 @@ from logging.config import fileConfig
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
-
+from dotenv import load_dotenv
 from alembic import context
 
 # NEW IMPORTS
@@ -21,8 +21,11 @@ if config.config_file_name is not None:
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
+# Cargar variables de entorno
+load_dotenv()
 
-from models import Base
+from db.base import Base
+from models import user, document, role, document_shared, user_role, log
 
 target_metadata = Base.metadata
 
@@ -46,7 +49,7 @@ def run_migrations_offline() -> None:
     """
     url = config.get_main_option("sqlalchemy.url")
     if url is None:
-        url = os.environ.get("SUPABASE_URL") or os.environ.get("DATABASE_URL", "postgresql://user:password@localhost:5432/instashare_db")
+        url = os.environ.get("SUPABASE_URL_ALEMBIC") or os.environ.get("DATABASE_URL", "postgresql://user:password@localhost:5432/instashare_db")
     if url and url.startswith("https://"):
         url = url.replace("https://", "postgresql://", 1)
     context.configure(
@@ -70,7 +73,7 @@ def run_migrations_online() -> None:
     configuration = config.get_section(config.config_ini_section, {})
     url = configuration.get("sqlalchemy.url")
     if url is None:
-        url = os.environ.get("SUPABASE_URL") or os.environ.get("DATABASE_URL", "postgresql://user:password@localhost:5432/instashare_db")
+        url = os.environ.get("SUPABASE_URL_ALEMBIC") or os.environ.get("DATABASE_URL", "postgresql://user:password@localhost:5432/instashare_db")
     if url and url.startswith("https://"):
         url = url.replace("https://", "postgresql://", 1)
     configuration["sqlalchemy.url"] = url # Update configuration with resolved URL
@@ -78,7 +81,7 @@ def run_migrations_online() -> None:
     connectable = engine_from_config(
         configuration,
         prefix="sqlalchemy.",
-        poolclass=pool.NullPool,
+        #poolclass=pool.NullPool,
     )
 
     with connectable.connect() as connection:
@@ -86,7 +89,8 @@ def run_migrations_online() -> None:
             connection=connection,
             target_metadata=target_metadata,
             compare_type=True, # Added for autogeneration
-            render_as_batch=True # Added for specific DBs like SQLite
+            render_as_batch=True, # Added for specific DBs like SQLite
+            compare_server_default=True, # Habilita la detección de cambios en valores por defecto
         )
 
         with context.begin_transaction():

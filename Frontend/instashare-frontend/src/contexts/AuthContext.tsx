@@ -7,7 +7,8 @@ interface AuthContextType {
   session: Session | null;
   loading: boolean;
   signInWithOAuth: (provider: 'google' | 'facebook' | 'linkedin') => Promise<void>;
-  logOut: () => Promise<void>;
+  logout: () => Promise<void>;
+  __setMockLoading?: (loading: boolean) => void; // Or without '?' if it's always required
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -36,13 +37,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signInWithOAuth = async (provider: 'google' | 'facebook' | 'linkedin') => {
     await supabase.auth.signInWithOAuth({
       provider: provider,
-      options: { 
+      options: {
         redirectTo: window.location.origin + '/dashboard' // Redirect to dashboard after login
       }
     });
   };
 
-  const logOut = async () => {
+  const logout = async () => {
     await supabase.auth.signOut();
   };
 
@@ -51,12 +52,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     session,
     loading,
     signInWithOAuth,
-    logOut,
+    logout,
   };
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {children}
     </AuthContext.Provider>
   );
 };

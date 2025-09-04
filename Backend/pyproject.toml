@@ -14,10 +14,26 @@ dependencies = [
     "pydantic-settings>=2.0.0",
     "python-dotenv>=1.0.0",
     "supabase",
-    "alembic"
+    "alembic",
+    "pydantic[email]>=2.11.7",
+    "python-multipart>=0.0.20",
+    "psycopg2>=2.9.10",
+    "python-jose>=3.5.0",
+    "pytest-asyncio>=1.1.0",
+    "celery[librabbitmq,redis]>=5.5.3",
+    "passlib>=1.7.4",
+    "bcrypt",
+    "gotrue>=2.12.4",
+    "celery[librabbitmq,redis]>=5.5.3",
 ]
 
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
+    "pytest-cov>=6.2.1",
 ]

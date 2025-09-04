@@ -66,7 +66,7 @@ export const userService = {
 
   getDocumentsUploadedByUser: async (id: number): Promise<UserDocumentsResponse> => {
     if (id === undefined || isNaN(id)) {
-      return Promise.resolve({ id: 0, name: '', email: '', phone: '', responsability: '', role: '', upload_documents: []} as UserDocumentsResponse); // Return an empty object that conforms to UserDocumentsResponse
+      return Promise.resolve({ id: 0, username: '', email: '', phone: '', responsability: '', role: '', upload_documents: []} as UserDocumentsResponse); // Return an empty object that conforms to UserDocumentsResponse
     }
     const response = await api.get<UserDocumentsResponse>(`/uploaded_documents/${id}`);
     return response.data;

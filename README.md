@@ -28,6 +28,19 @@ The backend is built with Python and utilizes the following key technologies:
 *   **Docker / Docker Compose:** Used for containerization, enabling consistent development, testing, and deployment environments.
 *   **GitHub Actions:** Configured for Continuous Integration (CI) to automate testing on code pushes.
 
+### Directory Structure (`Backend/app`)
+The `app` directory organizes the backend logic into several modules:
+*   `alembic/`: Contains Alembic migration scripts and environment configurations for managing database schema changes.
+*   `auth/`: Handles all authentication-related logic, including JWT token creation, verification, and FastAPI dependencies for securing API routes.
+*   `compressed_files/`: A local directory used for storing compressed document files temporarily or for archival.
+*   `core/`: Houses core application components such as the main FastAPI application instance, global configuration settings, and Celery task definitions.
+*   `db/`: Contains modules related to database interaction, including SQLAlchemy engine and session setup, as well as utilities for database seeding and cleaning.
+*   `models/`: Defines SQLAlchemy ORM models, with each model (e.g., `User`, `Document`, `Role`) separated into its own file for better organization and maintainability.
+*   `schemas/`: Holds Pydantic schemas for data validation and serialization, crucial for defining the structure of API request and response bodies.
+*   `services/`: Implements the business logic for various entities (e.g., `UserService`, `DocumentService`), abstracting interactions with the database and external services.
+*   `sheduler_tasks/`: Contains the Celery application configuration and definitions for scheduled background tasks, such as the document compression process.
+*   `test/`: Dedicated to unit and integration tests for the backend services and API endpoints, ensuring the application's reliability.
+
 ### Testing
 The backend includes a comprehensive suite of tests to ensure reliability and correctness.
 *   **Framework:** `pytest` is used as the primary testing framework, with `pytest-asyncio` enabling testing of asynchronous functions.
@@ -90,6 +103,16 @@ The frontend is developed using modern web technologies:
 *   **react-router-dom:** Provides declarative routing for React applications, enabling navigation between different views.
 *   **react-icons:** A library that offers a wide collection of customizable SVG icons for various UI elements.
 *   **Jest / @testing-library/react / @testing-library/jest-dom / @testing-library/user-event:** The testing suite for the frontend, providing tools for unit and integration testing of React components, focusing on user behavior.
+
+### Directory Structure (`Frontend/instashare-frontend/src`)
+The `src` directory within the frontend project is structured as follows:
+*   `components/`: Contains reusable React components, organized by their functionality (e.g., `Navbar`, `Sidebar`, `PrivateRoute`). These components are designed to be modular and promote reusability across the application.
+*   `contexts/`: Provides React context for global state management, such as `AuthContext` for handling user authentication state throughout the application.
+*   `hooks/`: Custom React hooks designed to encapsulate and reuse stateful logic across different components.
+*   `mocks/`: Stores mock implementations of services and external dependencies (e.g., Supabase client) specifically used for testing purposes, allowing for isolated and reliable tests.
+*   `pages/`: Defines the main views or pages of the application. Each directory typically corresponds to a specific route or section of the application (e.g., `Dashboard`, `Documents`, `Login`, `Users`).
+*   `services/`: Encapsulates the logic for interacting with the backend API and other external services (e.g., `api.ts`, `documentService.ts`, `supabaseClient.ts`), centralizing data fetching and manipulation.
+*   `utils/`: Contains general utility functions and helper modules that are used across various parts of the application.
 
 ### Testing
 The frontend application includes tests to ensure its functionality and user experience.

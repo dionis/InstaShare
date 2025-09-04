@@ -53,7 +53,7 @@ const UserListPage: React.FC = () => {
       <ul className={styles.userList}>
         {users.map((user) => (
           <li key={user.id} className={styles.userListItem}>
-            <span>{user.name} ({user.email}) - {user.role}</span>
+            <span>{user.username} ({user.email}) - {user.role}</span>
             <Link to={`/dashboard/users/${user.id}`} className={styles.viewButton}><FaEdit className={styles.icon} /> View/Edit</Link>
           </li>
         ))}

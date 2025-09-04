@@ -248,7 +248,7 @@ const DocumentDetailPage: React.FC = () => {
             >
               <option value="">Select a user to share with</option>
               {availableUsers.map(user => (
-                <option key={user.id} value={user.id}>{user.name} ({user.email})</option>
+                <option key={user.id} value={user.id}>{user.username} ({user.email})</option>
               ))}
             </select>
             <button onClick={handleShareDocument} className={styles.shareButton} disabled={!selectedUserToShare}>

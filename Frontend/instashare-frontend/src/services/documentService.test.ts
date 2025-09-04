@@ -38,7 +38,7 @@ describe('documentService', () => {
     const formData = new FormData();
     formData.append('file', mockFile);
 
-    const response = await documentService.uploadDocumentFile(docId, mockFile);
+    const response = await documentService.uploadDocumentFile(docId, 'test.pdf', 'pdf', mockFile);
 
     expect(mockedApi.post).toHaveBeenCalledTimes(1);
     expect(mockedApi.post).toHaveBeenCalledWith(`/documents/upload_document_file/${docId}`, expect.any(FormData), {

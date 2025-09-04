@@ -23,6 +23,8 @@ dependencies = [
     "celery[librabbitmq,redis]>=5.5.3",
     "passlib>=1.7.4",
     "bcrypt",
+    "gotrue>=2.12.4",
+    "celery[librabbitmq,redis]>=5.5.3",
 ]
 
 [project.optional-dependencies]

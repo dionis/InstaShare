@@ -1,9 +1,9 @@
 from celery.schedules import crontab
 
 # Broker de Celery (Redis)
-broker_url = 'redis://localhost:6379/0'
+broker_url = 'redis://redis-instashare:6379/0'
 # Backend para almacenar los resultados (opcional)
-result_backend = 'redis://localhost:6379/0'
+result_backend = 'redis://redis-instashare:6379/0'
 
 # Configuración de las tareas periódicas
 # Se pueden añadir más tareas al diccionario

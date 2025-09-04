@@ -22,6 +22,8 @@ RUN uv sync --frozen
 
 # Copy application code
 COPY ./app ./app
+
+RUN uv sync --frozen 
 #COPY ./specs ./specs
 
 # Expose port
@@ -29,5 +31,9 @@ EXPOSE 8000
 
 # Command to run uvicorn with hot reload
 WORKDIR "app/"
-CMD ["celery", "-A", "sheduler_tasks.app", "worker", "-pool=solo ","--loglevel=info", "&"]
-CMD ["celery", "-A", "sheduler_tasks.app", "beat", "--loglevel=info", "&"]
+# For windows OS 
+#CMD ["celery", "-A", "sheduler_tasks.app", "worker", "--pool=solo ","--loglevel=info", "&"]
+#CMD ["celery", "-A", "sheduler_tasks.app", "worker", "--loglevel=info"]
+#CMD ["celery", "-A", "sheduler_tasks.app", "beat", "--loglevel=info"]
+CMD [ "sh", "-c","celery -A sheduler_app worker -l INFO  & celery -A sheduler_app beat -l INFO  & tail -f /dev/null"]
+#CMD ["celery", "-A", "sheduler_tasks.app", "beat", "--loglevel=info", "&"]

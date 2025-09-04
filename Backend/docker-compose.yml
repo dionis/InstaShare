@@ -43,6 +43,8 @@ services:
       dockerfile: Dockerfile.worker
     depends_on:
       - redis-instashare
+    environment:
+      - REDIS_URL=redis://redis-instashare:6379/0
 volumes:
   redis-instashare:
     driver: local

@@ -16,6 +16,7 @@ async def get_current_user(token: str = Depends(oauth2_scheme), db: Session = De
     )
     token_data = verify_access_token(token, credentials_exception)
     user = db.query(UserModel).filter(UserModel.email == token_data.username).first()
+    print(f"User ==>: {user}")
     if user is None:
         raise credentials_exception
     return UserSchema.from_orm(user)

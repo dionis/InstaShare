@@ -63,6 +63,7 @@ def dummy_user_fixture():
         "id": 1,
         "username": "Test User",
         "email": "test@example.com",
+        "password": "testpassword",
         "hashed_password": "testpassword",
         "phone": "1234567890",
         "responsability": "User",

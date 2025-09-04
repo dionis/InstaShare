@@ -22,6 +22,7 @@ dependencies = [
     "pytest-asyncio>=1.1.0",
     "celery[librabbitmq,redis]>=5.5.3",
     "passlib>=1.7.4",
+    "bcrypt",
 ]
 
 [project.optional-dependencies]

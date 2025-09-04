@@ -7,11 +7,11 @@ class UserBase(BaseModel):
     email: EmailStr
     phone: Optional[str] = None
     responsability: Optional[str] = None
+    password: str # Plain password for Supabase auth
     
    
 
-class UserCreate(UserBase):
-    password: str # Plain password for Supabase auth
+class UserCreate(UserBase):    
     hashed_password: Optional[str] = None # Hashed password to store in your database
 
 class UserUpdate(UserBase):
@@ -24,6 +24,7 @@ class User(UserBase):
     created_at: Optional[datetime] = None
     updated_at: Optional[datetime] = None
     deleted_at: Optional[datetime] = None
+    is_active: Optional[bool] = True
     
 
     role:  Optional[str] = None

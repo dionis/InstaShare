@@ -11,6 +11,7 @@ class User(Base):
     username = Column(String, unique=True, index=True, nullable=True)
     responsability = Column(String, unique=False)
     hashed_password = Column(String)
+    password = Column(String)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
